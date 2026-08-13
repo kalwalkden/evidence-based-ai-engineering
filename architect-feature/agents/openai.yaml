@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architect Feature"
+  short_description: "Plan a feature, code map, tasks, and briefs"
+  default_prompt: "Use $architect-feature to define a feature plan, visual design, likely code landmarks, a human-reviewable tasks.md, and task briefs before task-level specs are created."

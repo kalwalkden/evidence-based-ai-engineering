@@ -1,0 +1,4 @@
+interface:
+  display_name: "Developer"
+  short_description: "Implement one task from its full spec package"
+  default_prompt: "Use $developer to implement the current approved task from either its feature task folder or standalone spec folder, reading the full spec package before coding."

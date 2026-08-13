@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Reviewer"
+  short_description: "Adversarially review feature readiness"
+  default_prompt: "Use $feature-reviewer in a fresh independent context to review a completed feature and return a read-only readiness verdict."

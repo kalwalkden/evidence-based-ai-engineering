@@ -1,0 +1,10 @@
+architect-feature
+discover-architecture
+ship-task
+ship-feature
+archive-work-artifact
+trace-domain-flow
+task-reviewer
+feature-reviewer
+developer
+shape-spec

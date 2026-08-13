@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shape Spec"
+  short_description: "Build a current-tree implementation handoff"
+  default_prompt: "Use $shape-spec to turn one approved task brief into a current-tree implementation handoff with verified code references, decisions, tests, and validation commands."

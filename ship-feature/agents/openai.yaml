@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ship Feature"
+  short_description: "Preflight and ship every feature task"
+  default_prompt: "Use $ship-feature on an explicit feature directory, preflight all feature and brief decisions, then shape, implement, independently review, and archive the feature."

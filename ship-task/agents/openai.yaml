@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ship Task"
+  short_description: "Shape and implement one feature task, then stop"
+  default_prompt: "Use $ship-task for feature ai/features/<feature-slug> (optionally ai/features/epics/<epic-slug>/<feature-slug>)."

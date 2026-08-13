@@ -1,0 +1,4 @@
+interface:
+  display_name: "Archive Work Artifact"
+  short_description: "Move completed planning artifacts safely"
+  default_prompt: "Use $archive-work-artifact to archive a completed feature task or standalone spec without overwriting existing artifacts."

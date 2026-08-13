@@ -1,0 +1,4 @@
+interface:
+  display_name: "Trace Domain Flow"
+  short_description: "Deep-trace one end-to-end flow into a docs/ deep dive"
+  default_prompt: "Use $trace-domain-flow to trace one representative end-to-end path through this repository and document it under docs/."
