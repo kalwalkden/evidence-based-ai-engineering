@@ -1,0 +1,4 @@
+interface:
+  display_name: "Discover Architecture"
+  short_description: "Scan repo architecture, conventions, and commands"
+  default_prompt: "Use $discover-architecture to scan this repository and summarize its stack, conventions, architecture, and canonical commands."
