@@ -132,11 +132,38 @@ This is an evolving open-source toolkit. The workflows are intentionally opinion
 meant to be adapted: use the parts that improve your team’s clarity and delivery confidence, then
 contribute what you learn.
 
+## Installing the skills
+
+`sync-installable-skills.sh` links every skill named in `installable-skills.txt` into
+`~/.codex/skills` and `~/.claude/skills`. Run it with `--dry-run` first to see exactly what it
+would change.
+
+```bash
+./sync-installable-skills.sh --dry-run
+```
+
+The installer only manages its own links. It records what it installed, removes only those links
+when a skill is later dropped from the list, and never touches real files, real directories, or
+symlinks pointing at another project — if another project already owns a skill name, the installer
+skips it with a warning instead of taking it over.
+
 ## Contributing
 
 Contributions that improve evidence quality, clarity, safety, validation, and developer experience
 are welcome. Please keep additions focused, explain the problem they solve, and preserve the core
 idea: AI assistance should make engineering work more understandable and trustworthy.
+
+Contributions are accepted under the project's license, per Apache-2.0 section 5.
+
+## License
+
+Licensed under the Apache License, Version 2.0 — see [LICENSE](LICENSE).
+
+Copyright 2026 Kal Walkden.
+
+Apache-2.0 permits commercial and private use, modification, and redistribution, provided the
+license and copyright notice are retained and changed files are marked. It also includes an express
+patent grant from contributors.
 
 ---
 
