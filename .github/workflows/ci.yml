@@ -61,7 +61,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: "20"
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Lint Markdown
         run: npx --yes markdownlint-cli2@${{ env.MARKDOWNLINT_VERSION }}
