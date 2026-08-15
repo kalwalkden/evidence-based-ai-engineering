@@ -1,0 +1,22 @@
+{
+  // Skill files are prose instructions for agents, so the rules that police
+  // prose shape are off. Everything that catches structural breakage — broken
+  // fences, malformed lists, bad headings — stays on.
+  "config": {
+    "default": true,
+
+    // Skills deliberately write long, unwrapped sentences; hard wrapping them
+    // would churn every file and make diffs unreadable.
+    "MD013": false,
+
+    // The README uses a centered HTML header block with badge images.
+    "MD033": false,
+    "MD041": false,
+
+    // Nested bullets under multi-digit ordered items ("10.") make this rule
+    // demand an indent that reads worse than the current one.
+    "MD007": false
+  },
+  "globs": ["**/*.md"],
+  "ignores": ["node_modules/**", ".git/**"]
+}

@@ -7,7 +7,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "archive_work_artifact.py"
 
 
@@ -36,8 +35,8 @@ class ArchiveWorkArtifactTests(unittest.TestCase):
                 "--confirm-feature-complete",
             ],
             text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
+            check=False,
         )
         output = result.stdout if result.returncode == 0 else result.stderr
         return result, json.loads(output)
@@ -60,7 +59,9 @@ class ArchiveWorkArtifactTests(unittest.TestCase):
         self.assertEqual(0, first_result.returncode, first_result.stderr)
         self.assertEqual("updated_no_move", first_payload["status"])
         self.assertTrue(epic_root.is_dir())
-        self.assertFalse((self.repo_root / "ai" / "archive" / "features" / "epics" / "platform").exists())
+        self.assertFalse(
+            (self.repo_root / "ai" / "archive" / "features" / "epics" / "platform").exists()
+        )
         self.assertIn("- [x] first-feature", (epic_root / "epic.md").read_text(encoding="utf-8"))
 
         second_result, second_payload = self.run_archive(first_feature)
@@ -111,7 +112,9 @@ class ArchiveWorkArtifactTests(unittest.TestCase):
 
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertEqual("ai/archive/features/legacy-platform", payload["target"])
-        self.assertTrue((self.repo_root / "ai" / "archive" / "features" / "legacy-platform").is_dir())
+        self.assertTrue(
+            (self.repo_root / "ai" / "archive" / "features" / "legacy-platform").is_dir()
+        )
 
     def test_archived_standalone_spec_reports_already_archived(self) -> None:
         spec_root = self.repo_root / "ai" / "archive" / "specs" / "completed-spec"

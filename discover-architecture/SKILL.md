@@ -83,22 +83,25 @@ Produce a concise, high-signal repository report that prevents wrong-stack assum
    - For any root doc other than `AGENTS.md` that does not yet point at `ARCHITECTURE.md`, note that as a follow-up so a human can add the pointer; do not edit those files in this skill.
 9. Update or create `ARCHITECTURE.md` at the repository root with the findings.
    - Preserve any section owned by another skill (for example a `trace-domain-flow` deep-dive link section). Refresh only the sections this skill owns.
-10. Update the discover-architecture block in `AGENTS.md`.
-   - Create `AGENTS.md` at the repository root if it does not exist.
-   - Write only between `<!-- discover-architecture:start -->` and `<!-- discover-architecture:end -->` markers. If both markers are missing, append a new marked block at the end of the file; do not touch any other content.
-   - Only one well-formed block — exactly one `start` marker immediately preceding its matching `end` marker — is safe to edit. Any other shape (exactly one marker present, markers out of order with `end` before `start`, an unequal number of `start` and `end` markers, or more than one marked block) means stop and report the marker problem instead of editing `AGENTS.md`.
-   - Block contents: the canonical lint/type-check/test command(s) from step 4, and a one-line pointer to `ARCHITECTURE.md` for the full report. Keep it to a handful of lines — this is a pointer, not a second report.
-   - Format:
-     ```
-     <!-- discover-architecture:start -->
-     ## Architecture
-     Full report: `ARCHITECTURE.md`
 
-     - Lint/format: `<command>`
-     - Type-check: `<command>`
-     - Test: `<command>`
-     <!-- discover-architecture:end -->
-     ```
+10. Update the discover-architecture block in `AGENTS.md`.
+
+    - Create `AGENTS.md` at the repository root if it does not exist.
+    - Write only between `<!-- discover-architecture:start -->` and `<!-- discover-architecture:end -->` markers. If both markers are missing, append a new marked block at the end of the file; do not touch any other content.
+    - Only one well-formed block — exactly one `start` marker immediately preceding its matching `end` marker — is safe to edit. Any other shape (exactly one marker present, markers out of order with `end` before `start`, an unequal number of `start` and `end` markers, or more than one marked block) means stop and report the marker problem instead of editing `AGENTS.md`.
+    - Block contents: the canonical lint/type-check/test command(s) from step 4, and a one-line pointer to `ARCHITECTURE.md` for the full report. Keep it to a handful of lines — this is a pointer, not a second report.
+    - Format:
+
+      ```markdown
+      <!-- discover-architecture:start -->
+      ## Architecture
+      Full report: `ARCHITECTURE.md`
+
+      - Lint/format: `<command>`
+      - Type-check: `<command>`
+      - Test: `<command>`
+      <!-- discover-architecture:end -->
+      ```
 
 ## Output
 

@@ -239,7 +239,7 @@ prune_retired_symlinks() {
     is_desired_skill "$name" && continue
 
     # readlink, not a resolved path: a dangling link left by a skill deleted
-    # from this repository still has to be recognised as ours and retired.
+    # from this repository still has to be recognized as ours and retired.
     target="$(readlink "$candidate" || true)"
 
     if ! links_into_repo "$target"; then

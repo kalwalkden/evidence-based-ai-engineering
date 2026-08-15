@@ -77,7 +77,7 @@ If expected spec file missing, note it explicitly and stop unless user wants to 
 - Do not pre-build future tasks or speculative extras.
 - Prefer simplest correct implementation.
 - Follow existing repo conventions for structure, naming, tests, validation.
-- If repo unfamiliar, use `$discover-architecture` skillfirst or inspect repo directly.
+- If repo unfamiliar, use `$discover-architecture` skill first or inspect repo directly.
 - Make smallest code/refactor/dependency/tooling changes needed to complete task cleanly.
 - When referencing files in notes, plans, reports, use repository-relative paths rooted at repo top level unless calling environment explicitly requires absolute paths.
 - Always run the full test suite before committing or reporting done. Never skip it, never substitute a subset, never ask whether to run it. The answer is always yes.
@@ -187,6 +187,7 @@ Before reporting completion:
   test -n "$TASK_BASELINE_DIR" && test -f "$TASK_BASELINE_MARKER" \
     && rm -rf -- "$TASK_BASELINE_DIR"
   ```
+
 - If the repository is not a git worktree, say so and fall back to recording the changed-path set
   directly. Do not silently review an unbounded target.
 - Always include a review loop after implementation. Invoke `$task-reviewer` in the current context

@@ -5,14 +5,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-
 
 FEATURE_ENTRY_RE = re.compile(r"^(\s*-\s+\[)([ xX])(\]\s+`?)([A-Za-z0-9][A-Za-z0-9._-]*)(`?.*)$")
 
@@ -29,7 +27,7 @@ class ChecklistEntry:
 
 
 def run(cmd: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(cmd, cwd=cwd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return subprocess.run(cmd, cwd=cwd, text=True, capture_output=True, check=False)
 
 
 def find_repo_root(start: Path) -> Path:
@@ -117,7 +115,11 @@ def find_standalone_spec_root(path: Path, repo_root: Path) -> Path | None:
 
 def ensure_active(path: Path, repo_root: Path) -> None:
     rel = rel_to_repo(path, repo_root)
-    if rel.parts[:3] == ("ai", "archive", "features") or rel.parts[:3] == ("ai", "archive", "specs"):
+    if rel.parts[:3] == ("ai", "archive", "features") or rel.parts[:3] == (
+        "ai",
+        "archive",
+        "specs",
+    ):
         raise ArchiveError(f"Artifact is already under ai/archive: {rel}")
 
 
@@ -144,7 +146,9 @@ def parse_feature_checklist(epic_md: Path) -> tuple[list[str], list[ChecklistEnt
         if slug in seen:
             raise ArchiveError(f"Epic checklist contains duplicate feature entry: {slug}")
         seen.add(slug)
-        entries.append(ChecklistEntry(slug=slug, checked=match.group(2).lower() == "x", line_index=index))
+        entries.append(
+            ChecklistEntry(slug=slug, checked=match.group(2).lower() == "x", line_index=index)
+        )
 
     if not entries:
         raise ArchiveError("Epic '## Features' section has no checkbox feature entries.")
@@ -167,7 +171,9 @@ def write_checked_entry(epic_md: Path, slug: str, dry_run: bool) -> bool:
     return True
 
 
-def epic_ready_to_archive(epic_root: Path, repo_root: Path, assume_checked: str | None = None) -> tuple[bool, list[str], list[str]]:
+def epic_ready_to_archive(
+    epic_root: Path, repo_root: Path, assume_checked: str | None = None
+) -> tuple[bool, list[str], list[str]]:
     _, entries = parse_feature_checklist(epic_root / "epic.md")
     if assume_checked:
         for entry in entries:
@@ -175,7 +181,9 @@ def epic_ready_to_archive(epic_root: Path, repo_root: Path, assume_checked: str 
                 entry.checked = True
     entry_slugs = sorted(entry.slug for entry in entries)
     unchecked = sorted(entry.slug for entry in entries if not entry.checked)
-    feature_dirs = sorted(child.name for child in epic_root.iterdir() if valid_feature_root(child, repo_root))
+    feature_dirs = sorted(
+        child.name for child in epic_root.iterdir() if valid_feature_root(child, repo_root)
+    )
 
     if entry_slugs != feature_dirs:
         missing_dirs = sorted(set(entry_slugs) - set(feature_dirs))
@@ -185,7 +193,9 @@ def epic_ready_to_archive(epic_root: Path, repo_root: Path, assume_checked: str 
             details.append(f"checklist entries without feature dirs: {', '.join(missing_dirs)}")
         if missing_entries:
             details.append(f"feature dirs without checklist entries: {', '.join(missing_entries)}")
-        raise ArchiveError("Epic checklist does not match feature directories (" + "; ".join(details) + ").")
+        raise ArchiveError(
+            "Epic checklist does not match feature directories (" + "; ".join(details) + ")."
+        )
 
     return not unchecked, unchecked, feature_dirs
 
@@ -242,7 +252,9 @@ def archive_standalone(spec_root: Path, repo_root: Path, dry_run: bool) -> dict[
     }
 
 
-def archive_feature(feature_root: Path, repo_root: Path, confirm: bool, dry_run: bool) -> dict[str, object]:
+def archive_feature(
+    feature_root: Path, repo_root: Path, confirm: bool, dry_run: bool
+) -> dict[str, object]:
     ensure_active(feature_root, repo_root)
     if not confirm:
         raise ArchiveError("Feature artifacts require --confirm-feature-complete.")
@@ -268,7 +280,9 @@ def archive_feature(feature_root: Path, repo_root: Path, confirm: bool, dry_run:
         expected_epics_root = features_root
         archive_epics_root = archive_features_root
     else:
-        raise ArchiveError(f"Unsupported active feature layout: {rel_to_repo(feature_root, repo_root)}")
+        raise ArchiveError(
+            f"Unsupported active feature layout: {rel_to_repo(feature_root, repo_root)}"
+        )
 
     epic_root = feature_root.parent
     if epic_root.parent != expected_epics_root or not (epic_root / "epic.md").is_file():
@@ -279,7 +293,9 @@ def archive_feature(feature_root: Path, repo_root: Path, confirm: bool, dry_run:
         )
 
     checklist_changed = write_checked_entry(epic_root / "epic.md", feature_root.name, dry_run)
-    ready, unchecked, feature_dirs = epic_ready_to_archive(epic_root, repo_root, assume_checked=feature_root.name if dry_run else None)
+    ready, unchecked, feature_dirs = epic_ready_to_archive(
+        epic_root, repo_root, assume_checked=feature_root.name if dry_run else None
+    )
     if not ready:
         return {
             "status": "updated_no_move" if checklist_changed else "no_move",
@@ -305,9 +321,17 @@ def archive_feature(feature_root: Path, repo_root: Path, confirm: bool, dry_run:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("artifact_path", help="Completed feature task/root or standalone spec path")
-    parser.add_argument("--repo-root", help="Repository root. Defaults to git root or current directory.")
-    parser.add_argument("--confirm-feature-complete", action="store_true", help="Required before archiving a feature artifact.")
-    parser.add_argument("--dry-run", action="store_true", help="Report the intended action without moving files.")
+    parser.add_argument(
+        "--repo-root", help="Repository root. Defaults to git root or current directory."
+    )
+    parser.add_argument(
+        "--confirm-feature-complete",
+        action="store_true",
+        help="Required before archiving a feature artifact.",
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Report the intended action without moving files."
+    )
     args = parser.parse_args()
 
     input_path = Path(args.artifact_path).expanduser()
@@ -315,24 +339,35 @@ def main() -> int:
         input_path = Path.cwd() / input_path
     input_path = input_path.resolve()
 
-    repo_root = Path(args.repo_root).expanduser().resolve() if args.repo_root else find_repo_root(input_path)
+    repo_root = (
+        Path(args.repo_root).expanduser().resolve()
+        if args.repo_root
+        else find_repo_root(input_path)
+    )
     try:
         if not input_path.exists():
             raise ArchiveError(f"Path does not exist: {input_path}")
 
         feature_root = find_feature_root(input_path, repo_root)
         if feature_root:
-            result = archive_feature(feature_root, repo_root, args.confirm_feature_complete, args.dry_run)
+            result = archive_feature(
+                feature_root, repo_root, args.confirm_feature_complete, args.dry_run
+            )
         else:
             spec_root = find_standalone_spec_root(input_path, repo_root)
             if not spec_root:
-                raise ArchiveError("Path is neither a valid feature artifact nor a standalone spec under ai/specs/.")
+                raise ArchiveError(
+                    "Path is neither a valid feature artifact nor a standalone spec under ai/specs/."
+                )
             result = archive_standalone(spec_root, repo_root, args.dry_run)
 
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0
     except ArchiveError as exc:
-        print(json.dumps({"status": "error", "message": str(exc)}, indent=2, sort_keys=True), file=sys.stderr)
+        print(
+            json.dumps({"status": "error", "message": str(exc)}, indent=2, sort_keys=True),
+            file=sys.stderr,
+        )
         return 2
 
 

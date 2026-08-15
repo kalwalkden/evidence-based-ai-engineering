@@ -1,0 +1,10 @@
+---
+# The agent manifests hold long single-line prompt strings, so line-length and
+# document-start are relaxed. Everything that catches real breakage stays on.
+extends: default
+
+rules:
+  line-length: disable
+  document-start: disable
+  truthy:
+    check-keys: false
