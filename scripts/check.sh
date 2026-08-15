@@ -74,8 +74,20 @@ group_lint() {
     shellcheck sync-installable-skills.sh scripts/check.sh
 }
 
+# The npm tools declare a minimum Node in "engines". A local Node newer than
+# CI's will run them happily, so check that floor explicitly here rather than
+# discovering the mismatch on a runner.
+node_meets_minimum() {
+  local have
+  have="$(node --version 2>/dev/null | sed 's/^v//')"
+  [[ -n "$have" ]] || return 1
+  [[ "$(printf '%s\n%s\n' "$NODE_MIN_VERSION" "$have" | sort -V | head -1)" \
+    == "$NODE_MIN_VERSION" ]]
+}
+
 group_prose() {
   printf '\nprose\n'
+  check "node >= $NODE_MIN_VERSION" node_meets_minimum
   check "markdownlint" npx --yes "markdownlint-cli2@$MARKDOWNLINT_VERSION"
   check "codespell" uvx --from "codespell[toml]==$CODESPELL_VERSION" codespell
   check "cspell" npx --yes "cspell@$CSPELL_VERSION" \
