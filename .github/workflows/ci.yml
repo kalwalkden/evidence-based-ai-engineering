@@ -12,24 +12,19 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# uv supplies every Python tool and interpreter, so no setup-python step is
-# needed. Tool versions are pinned here rather than floating to latest, so a
-# new release upstream cannot turn a green branch red on its own.
-env:
-  UV_VERSION: "0.11.28"
-  RUFF_VERSION: "0.16.3"
-  YAMLLINT_VERSION: "1.38.0"
-  SHELLCHECK_VERSION: "0.11.0.1"
-  CODESPELL_VERSION: "2.4.3"
-  PYYAML_VERSION: "6.0.2"
-  PYTEST_VERSION: "9.1.1"
-
+# Tool versions live in scripts/tool-versions.env so this workflow and
+# scripts/check.sh cannot drift apart. Each job loads them into $GITHUB_ENV
+# before the steps that need them. uv supplies every Python tool and
+# interpreter, so no setup-python step is needed.
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+
+      - name: Load tool versions
+        run: grep -E '^[A-Z_]+=' scripts/tool-versions.env >> "$GITHUB_ENV"
 
       - uses: astral-sh/setup-uv@v10
         with:
@@ -48,13 +43,16 @@ jobs:
       - name: Shellcheck
         run: >
           uvx --from shellcheck-py==${{ env.SHELLCHECK_VERSION }}
-          shellcheck sync-installable-skills.sh
+          shellcheck sync-installable-skills.sh scripts/check.sh
 
   prose:
     name: Docs and spelling
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+
+      - name: Load tool versions
+        run: grep -E '^[A-Z_]+=' scripts/tool-versions.env >> "$GITHUB_ENV"
 
       - uses: astral-sh/setup-uv@v10
         with:
@@ -66,7 +64,7 @@ jobs:
           node-version: "20"
 
       - name: Lint Markdown
-        run: npx --yes markdownlint-cli2@0.23.2
+        run: npx --yes markdownlint-cli2@${{ env.MARKDOWNLINT_VERSION }}
 
       # Two complementary spell checks: codespell has a curated
       # misspelling->correction list (high precision, no dictionary to
@@ -78,13 +76,18 @@ jobs:
           codespell
 
       - name: Spell check (cspell)
-        run: npx --yes cspell@10.0.1 --no-progress --show-suggestions "**"
+        run: >
+          npx --yes cspell@${{ env.CSPELL_VERSION }}
+          --no-progress --show-suggestions "**"
 
   validate:
     name: Validate skills
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+
+      - name: Load tool versions
+        run: grep -E '^[A-Z_]+=' scripts/tool-versions.env >> "$GITHUB_ENV"
 
       - uses: astral-sh/setup-uv@v10
         with:
@@ -108,6 +111,9 @@ jobs:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v7
+
+      - name: Load tool versions
+        run: grep -E '^[A-Z_]+=' scripts/tool-versions.env >> "$GITHUB_ENV"
 
       - uses: astral-sh/setup-uv@v10
         with:
