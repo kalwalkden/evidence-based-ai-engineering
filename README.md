@@ -7,10 +7,10 @@
 </p>
 
 <p align="center">
-  <img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-c6a36d.svg?labelColor=050806">
-  <img alt="10 skills" src="https://img.shields.io/badge/skills-10-c6a36d.svg?labelColor=050806">
-  <img alt="Runtimes: Codex and Claude Code" src="https://img.shields.io/badge/runtimes-Codex%20%7C%20Claude%20Code-c6a36d.svg?labelColor=050806">
-  <img alt="Requires bash 3.2+" src="https://img.shields.io/badge/requires-bash%203.2%2B-c6a36d.svg?labelColor=050806">
+  <img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-8a6d3b.svg?labelColor=050806">
+  <img alt="10 skills" src="https://img.shields.io/badge/skills-10-8a6d3b.svg?labelColor=050806">
+  <img alt="Runtimes: Codex and Claude Code" src="https://img.shields.io/badge/runtimes-Codex%20%7C%20Claude%20Code-8a6d3b.svg?labelColor=050806">
+  <img alt="Requires bash 3.2+" src="https://img.shields.io/badge/requires-bash%203.2%2B-8a6d3b.svg?labelColor=050806">
 </p>
 
 ---
