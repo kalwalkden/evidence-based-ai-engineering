@@ -1,29 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="Evidence-Based AI Engineering Toolkit — AI-assisted delivery with an evidence trail at every handoff">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0f172a"/>
-      <stop offset="55%" stop-color="#152238"/>
-      <stop offset="100%" stop-color="#1e293b"/>
+      <stop offset="0%" stop-color="#050806"/>
+      <stop offset="55%" stop-color="#080d0a"/>
+      <stop offset="100%" stop-color="#0e1410"/>
     </linearGradient>
     <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="55%" stop-color="#22d3ee"/>
-      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#c6a36d"/>
+      <stop offset="55%" stop-color="#f4dfbb"/>
+      <stop offset="100%" stop-color="#c6a36d" stop-opacity="0"/>
     </linearGradient>
   </defs>
 
   <rect width="1200" height="300" fill="url(#bg)"/>
   <rect x="0" y="0" width="1200" height="4" fill="url(#rule)"/>
 
-  <text x="72" y="118" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
-        font-size="46" font-weight="700" fill="#f8fafc" letter-spacing="-0.5">Evidence-Based AI Engineering Toolkit</text>
+  <text x="72" y="118" font-family="'Europa', 'Avenir Next', Avenir, ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif"
+        font-size="46" font-weight="600" fill="#f4dfbb" letter-spacing="-0.5">Evidence-Based AI Engineering Toolkit</text>
 
-  <text x="72" y="162" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
-        font-size="21" font-weight="400" fill="#94a3b8">Ship AI-assisted work you can defend — an evidence trail at every handoff.</text>
+  <text x="72" y="162" font-family="'Europa', 'Avenir Next', Avenir, ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif"
+        font-size="21" font-weight="400" fill="#f3f5ef" fill-opacity="0.64">Ship AI-assisted work you can defend — an evidence trail at every handoff.</text>
 
   <!-- pipeline motif -->
-  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#cbd5e1">
-    <g stroke="#334155" stroke-width="1.5">
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#f3f5ef" fill-opacity="0.78">
+    <g stroke="#c6a36d" stroke-opacity="0.3" stroke-width="1.5">
       <line x1="150" y1="232" x2="266" y2="232"/>
       <line x1="352" y1="232" x2="468" y2="232"/>
       <line x1="548" y1="232" x2="664" y2="232"/>
@@ -32,27 +32,27 @@
     </g>
 
     <g>
-      <rect x="72" y="214" width="78" height="36" rx="8" fill="#1e293b" stroke="#334155"/>
+      <rect x="72" y="214" width="78" height="36" rx="8" fill="#0c110e" stroke="#c6a36d" stroke-opacity="0.24"/>
       <text x="111" y="236" text-anchor="middle">discover</text>
     </g>
     <g>
-      <rect x="266" y="214" width="86" height="36" rx="8" fill="#1e293b" stroke="#334155"/>
+      <rect x="266" y="214" width="86" height="36" rx="8" fill="#0c110e" stroke="#c6a36d" stroke-opacity="0.24"/>
       <text x="309" y="236" text-anchor="middle">architect</text>
     </g>
     <g>
-      <rect x="468" y="214" width="80" height="36" rx="8" fill="#1e293b" stroke="#334155"/>
+      <rect x="468" y="214" width="80" height="36" rx="8" fill="#0c110e" stroke="#c6a36d" stroke-opacity="0.24"/>
       <text x="508" y="236" text-anchor="middle">shape</text>
     </g>
     <g>
-      <rect x="664" y="214" width="78" height="36" rx="8" fill="#1e293b" stroke="#334155"/>
+      <rect x="664" y="214" width="78" height="36" rx="8" fill="#0c110e" stroke="#c6a36d" stroke-opacity="0.24"/>
       <text x="703" y="236" text-anchor="middle">build</text>
     </g>
     <g>
-      <rect x="858" y="214" width="74" height="36" rx="8" fill="#0b3b47" stroke="#22d3ee"/>
-      <text x="895" y="236" text-anchor="middle" fill="#67e8f9">review</text>
+      <rect x="858" y="214" width="74" height="36" rx="8" fill="#242116" stroke="#c6a36d" stroke-opacity="0.88"/>
+      <text x="895" y="236" text-anchor="middle" fill="#ead4ad" fill-opacity="1">review</text>
     </g>
     <g>
-      <rect x="1048" y="214" width="80" height="36" rx="8" fill="#1e293b" stroke="#334155"/>
+      <rect x="1048" y="214" width="80" height="36" rx="8" fill="#0c110e" stroke="#c6a36d" stroke-opacity="0.24"/>
       <text x="1088" y="236" text-anchor="middle">archive</text>
     </g>
   </g>

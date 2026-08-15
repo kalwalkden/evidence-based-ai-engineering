@@ -7,10 +7,10 @@
 </p>
 
 <p align="center">
-  <img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue.svg">
-  <img alt="10 skills" src="https://img.shields.io/badge/skills-10-0f172a.svg">
-  <img alt="Runtimes: Codex and Claude Code" src="https://img.shields.io/badge/runtimes-Codex%20%7C%20Claude%20Code-22d3ee.svg">
-  <img alt="Requires bash 3.2+" src="https://img.shields.io/badge/requires-bash%203.2%2B-64748b.svg">
+  <img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-c6a36d.svg?labelColor=050806">
+  <img alt="10 skills" src="https://img.shields.io/badge/skills-10-c6a36d.svg?labelColor=050806">
+  <img alt="Runtimes: Codex and Claude Code" src="https://img.shields.io/badge/runtimes-Codex%20%7C%20Claude%20Code-c6a36d.svg?labelColor=050806">
+  <img alt="Requires bash 3.2+" src="https://img.shields.io/badge/requires-bash%203.2%2B-c6a36d.svg?labelColor=050806">
 </p>
 
 ---
@@ -130,12 +130,18 @@ onboarding, or inheriting a system.
 
 Skip feature planning. Shape a spec and implement against it. Then, review the exact diff.
 
+Run the three skills yourself, stopping between each:
+
 | Skill | Role |
 | --- | --- |
 | `shape-spec` | Expands a brief into a task-level `spec/` package grounded in current repo evidence |
 | `developer` | Implements one task, adds high-ROI tests, validates before reporting |
 | `task-reviewer` | Spec-aware, read-only review of the resolved diff before merge |
-OR
+
+**OR** hand the whole task to one skill:
+
+| Skill | Role |
+| --- | --- |
 | `ship-task` | Runs shape + developer for exactly one task, then **stops** |
 
 ### A whole feature — multi-step work
