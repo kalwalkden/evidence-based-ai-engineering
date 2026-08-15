@@ -179,7 +179,7 @@ Worth knowing before you adopt it:
   catches meaningfully more than self-review. It still misses things and a "Ready" verdict is not a
   guarantee of correctness.
 - **It adds files to your repo.** Some teams want the decision trail in the repository; others will
-  find `ai/` noisy. If you want plans in Linear or Notion instead you can modifiy the skills do that, but it is going to be a bit fussy.
+  find `ai/` noisy. If you want plans in Linear or Notion instead you can modify the skills do that, but it is going to be a bit fussy.
 - **Best results need model diversity.** The strongest guarantee is review by a different capable model.
 
 ## Installer safety
