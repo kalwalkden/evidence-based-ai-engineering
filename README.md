@@ -80,6 +80,13 @@ Plans, specs, decisions, tradeoffs, and validation evidence are written to `ai/`
 archived on completion. The next engineer, or you in six months, inherits the decision
 trail.
 
+## Why it is designed this way
+
+The separation between planning, shaping, implementation, and independent review is deliberate. It
+keeps decisions durable, limits context leakage, and makes each result attributable to the evidence
+available at that stage. See [Design principles](docs/design-principles.md) for the reasoning behind
+the workflow, review boundaries, model routing, and artifact lifecycle.
+
 ## Quick start
 
 The smallest safe path is three commands. Nothing is installed until you've seen the plan.
