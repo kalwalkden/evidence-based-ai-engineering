@@ -94,6 +94,7 @@ If expected spec file missing, note it explicitly and stop unless user wants to 
 - Keep security in mind for task at hand.
 - Add brief code comments for non-obvious decisions, edge cases, invariants, tricky control flow, or code whose intent is not immediately clear from names and structure.
 - Prefer comments that explain why something is done, what constraint is being preserved, or what future maintainers should be careful not to break.
+- Code comments must describe the code and its durable context, not the development process that produced it. Do not reference tasks, tickets, feature requests, specs, prompts, implementation phases, or temporary planning artifacts in code comments. When context is needed, reference a concrete code location, type, function, module, or subsystem; the underlying technical or business concept; or a durable document under `/docs`.
 - Avoid narrating obvious code, but err slightly toward adding a small clarifying comment when the logic took real thought to understand.
 - Update docs/comments only when they materially improve correctness or maintainability.
 - Call out any large refactor or tooling change needed to complete task.
@@ -112,6 +113,7 @@ Before reporting completion:
 - Discover repo canonical checks + full test-suite command.
 - If repo has no full test-suite command, say it explicitly and run closest available project-wide validation.
 - Also run relevant linters, type checks, aggregators needed for confidence.
+- Review every new and modified code comment for references to tasks, tickets, feature requests, specs, prompts, implementation phases, or temporary planning artifacts. Remove those process references or rewrite them around the relevant code location, technical/business concept, or durable `/docs` document before reporting completion.
 - Fix issues and re-run until full test suite + selected checks pass.
 - Always run the full test suite at end of task before committing or reporting completion. Never skip, never substitute a subset, never ask.
 - Do not claim validation you did not perform.
