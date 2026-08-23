@@ -32,7 +32,7 @@ Produce a concise, high-signal repository report that prevents wrong-stack assum
 - Do not install dependencies.
 - Do not use network access unless the user explicitly asks for it.
 - Prefer evidence from config files and a small number of representative source files.
-- Treat Reveal as optional local evidence. Do not install it, use network access, or infer its capabilities from remote documentation or a version number.
+- Treat Reveal as optional local evidence. Do not install it, use network access, or infer its capabilities from remote documentation or a version number. Reveal 0.122.0 is only an eligibility threshold: use a new adapter only when the installed version is at least 0.122.0 and that executable locally advertises the adapter plus its schema, parameters, operators, URI syntax, supported language, and applicable analyzer tier.
 - Treat static import, call, churn, and complexity signals as investigation leads, not defects. Verify any signal that materially shapes the report against source, manifests/configuration, call sites, tests, or Git history.
 - Do not recommend changes. Report what exists and what the repository appears to prefer.
 - If uncertain, say so explicitly and name the missing evidence that would resolve the uncertainty.
@@ -66,14 +66,27 @@ Produce a concise, high-signal repository report that prevents wrong-stack assum
    - Use `rg` to find strong signals for dependency injection, error handling, logging, configuration, database access, and testing patterns.
    - Open a small number of representative files only.
 6. Optionally gather bounded structural evidence with Reveal.
-   - Locate `reveal` through the platform command lookup. If present, record `reveal --version`.
-   - Start with its generated local help. Use `--agent-help`, adapter/language registries, discovery output, per-file explanation, and adapter schemas only when that installed executable advertises them. Fall back to ordinary help when progressive discovery is unavailable.
-   - Build a small capability matrix before querying: an analysis class is usable only when the binary advertises both its adapter and the required parameter, operator, and URI syntax. Do not guess commands from this skill, its version, or remote docs. Record adapters, languages/analyzer tiers, and query classes actually used, skipped, or failed.
-   - Derive the smallest meaningful production source roots from manifests, workspace/package configuration, and the current layout (for example configured `src`, `app`, or `lib` directories). In a monorepo, analyze relevant package roots separately. Intersect them with locally advertised language support, and use per-file capability information when analyzer quality affects a finding. Keep tests for verification, but do not let them dominate production rankings unless explicitly reporting a test surface.
+   - Locate `reveal` through the platform command lookup. If present, record `reveal --version`; the 0.122.0+ check makes the adapter path eligible but does not establish that any adapter works.
+   - Start with its generated local help. Prefer `--agent-help`, adapter/language registries, discovery output, per-file explanation, and adapter schemas only when that installed executable advertises them; fall back to ordinary help when progressive discovery is unavailable. A version, shipped schema, configuration key, or helper method alone is not proof that a capability is wired up. For any consequential use, run a planted or known-positive cross-check.
+   - Build a small capability matrix before querying: an analysis class is usable only when the binary advertises the adapter and every required parameter, operator, and URI syntax. Do not guess commands from this skill, its version, or remote docs. Unsupported `ast://` parameters can silently return an empty result; require local schema support and a known-positive cross-check before interpreting emptiness as evidence. Record adapters, languages/analyzer tiers, and query classes as used, skipped, or failed.
+   - Derive the smallest meaningful production source roots from manifests, workspace/package configuration, and the current layout (for example configured `src`, `app`, or `lib` directories). In a monorepo, analyze relevant package roots separately. Scope every adapter and ranking query to those roots, intersect them with locally advertised language support, and use per-file capability information when analyzer quality affects a finding. Production path scoping is the reliable exclusion mechanism: treat `.reveal.yaml`, `--ignore`, and `?ignore=` as untrusted until a planted positive case proves them effective. Manually filter residual generated, vendored, dependency, build, cache, planning (`ai/`), documentation, test-heavy, and bulk-data trees. Keep tests for verification, but do not let them dominate production rankings unless explicitly reporting a test surface.
+   - Use this role matrix when locally supported (all nine adapters remain subject to the gates above):
+
+     | Adapter | Approved discovery role |
+     | --- | --- |
+     | `deps://` | Preferred source for dependency centrality and static cycles; verify edges. |
+     | `trace://` | Structural lead for a later domain-flow investigation; preserve manual tracing. |
+     | `surface://`, `contracts://`, `architecture://` | Investigation leads only; verify with source, configuration, wiring, and tests. |
+     | `hotspots://` | Supplementary size/quality signal; never replaces churn plus complexity/quality. |
+     | `overview://` | Unreliable optional lead only when already usable locally; never a recommended path or reason to install dependencies. |
+     | `testability://` | Optional corroboration only. |
+     | `pack://` | First-class equivalent of the existing locally advertised pack workflow. |
+
+   - Prefer `deps://` for dependency centrality and cycles when its locally advertised schema works. Retain lower-level, locally advertised queries as the fallback on older or partial installations. If `reveal review` is used, scope it to production paths, require cycle detection to have run, and treat its import findings as invalid when cycle detection was skipped; exit status 1 can mean findings were present rather than command failure.
    - Exclude `.git`, dependencies, generated, vendored, build, cache, planning (`ai/`), ordinary documentation, and bulk-data trees by default. Analyze the repository root only when it is genuinely the source root and the advertised filtering remains bounded. Use short top sets and only drill into candidates useful for orientation.
-   - When advertised, use import fan-in for dependency centrality; component/cohesion/coupling analysis for boundaries; entrypoint and circular-dependency analysis for wiring and cycles; churn combined with quality or complexity for change-risk candidates; AST symbol complexity for symbol-level detail; and inbound caller ranking plus module relationships for orchestration hubs. A convenience overview command may be a secondary lead only after local help/schema inspection; it does not replace these evidence classes or the baseline pass.
+   - When advertised, use `deps://` or its locally supported equivalent for dependency centrality and static cycles; component/cohesion/coupling analysis for boundaries; entrypoint and circular-dependency analysis for wiring; churn combined with quality or complexity for change-risk candidates; AST symbol complexity for symbol-level detail; and inbound caller ranking plus module relationships for orchestration hubs. `hotspots://` does not replace the bounded Git churn plus separate complexity/quality method. A convenience overview command may be a secondary lead only after local help/schema inspection; it does not replace these evidence classes or the baseline pass.
    - Verify consequential candidates before reporting: inspect central modules and representative importers (including aliases/exports); confirm boundaries and cycles from static edges and configuration; confirm entrypoints from scripts, manifests, runtime/framework wiring, or direct invocation; confirm hotspots from a bounded, explainable Git history window plus source and tests; and confirm orchestration from definitions, representative callers/callees, modules, and dynamic wiring. Do not compare churn-derived scores from different history windows without explicitly qualifying the mismatch. Drop unverified, duplicate, generated, test-only, or trivial candidates.
-   - If Reveal is absent, unsupported, partial, ambiguous, or a query fails, continue. Use manifests/configuration, language-appropriate `rg` searches for imports/registration/call sites, direct source inspection, Git file-touch history combined with file structure or complexity evidence, and tests. State what could not be quantified; never let a failed query suppress a report section or turn partial raw output into a finding.
+   - If Reveal is absent, unsupported, partial, ambiguous, or a query fails, continue. Use manifests/configuration, language-appropriate `rg` searches for imports/registration/call sites, direct source inspection, Git file-touch history combined with file structure or complexity evidence, and tests. State what could not be quantified; never let a failed query suppress a report section or turn partial raw output into a finding. Do not make language-general claims beyond locally verified Python and TypeScript evidence.
 7. Identify project structure hotspots.
    - Distinguish entry points and architectural boundaries, dependency centrality (static import fan-in), change-risk hotspots (churn plus a separate quality/complexity signal), and orchestration hubs (inbound callers plus module/call relationships). None is automatically a defect or refactoring recommendation.
    - These hotspots are also the candidate list for a later `trace-domain-flow` deep dive, so name them concretely (files, modules, boundaries).
@@ -128,15 +141,16 @@ Produce a single markdown report with:
 ## Project structure hotspots
 
 - Entry points and verified architectural boundaries
-- Dependency centrality: verified static import fan-in, clearly labeled as centrality rather than risk
+- Dependency centrality: verified `deps://` output or static import fan-in, clearly labeled as centrality rather than risk
 - Change-risk hotspots: verified Git churn combined with a separate quality or complexity signal; label AST McCabe complexity separately from file-level heuristic or fallback analysis
 - Orchestration hubs: verified inbound callers and module/call relationships
-- Report static cycles only when their edges are verified and useful for orientation
+- Report static cycles only when their edges are verified and useful for orientation; skipped cycle detection invalidates `reveal review` import findings
 
 ## Analysis coverage and limitations
 
 - Source roots and languages covered
-- Whether Reveal contributed, its recorded version, and the capability classes actually used
+- Whether Reveal contributed, its recorded version, and the adapter names/classes actually used
+- Adapters skipped because the installed version predates 0.122.0, skipped because local capability/schema support was absent, and adapters whose queries failed
 - The exact Git history window used for churn-derived evidence, when applicable
 - Unsupported languages, analyzer fallback, skipped or failed queries, and normal-tool-only coverage
 - Material static-analysis blind spots, such as dynamic imports, runtime registration, callbacks, dispatch, reflection, or metaprogramming
