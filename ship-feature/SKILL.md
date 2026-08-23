@@ -79,15 +79,29 @@ reasoning effort; that alone must not stop the run.
 
 ## Pass the Branch Gate Once
 
-Derive the feature slug from the feature root basename and inspect the current branch. If the branch
-is neither exactly the slug nor ends in `/<feature-slug>`, warn the user and ask once whether to
-create or switch to a feature branch. Prefer the repository's branch convention, otherwise
-`codex/<feature-slug>`. Do not start task work until the user answers. If the user declines, continue
-on the current branch.
+Derive the feature slug from the feature root basename and inspect the current branch. Accept the
+branch when it is exactly the slug, ends in `/<feature-slug>`, or begins with the slug followed by a
+separator (`<feature-slug>-...`, `<feature-slug>_...`). A hosted runtime that derives the session's
+working branch from the branch you selected commonly produces that last form.
+
+Otherwise the branch is unexpected, and the response depends on whether this run can reach the user:
+
+- **Interactive run:** warn the user and ask once whether to create or switch to a feature branch.
+  Prefer the repository's branch convention, otherwise `<feature-slug>`. Do not start task
+  work until the user answers. If the user declines, continue on the current branch.
+- **Run that cannot reach the user** — an unattended, scheduled, or hosted session, including one
+  whose environment marks it remote: never stop here. Continue on the current branch, record the
+  branch name and the mismatch in `ship-log.md`, and state it once in the final report. A branch
+  naming convention is not worth failing an automated run over.
+
+Never create or switch branches on your own initiative in a hosted session. Such runtimes commonly
+restrict pushes to the working branch the session started on, so a branch created inside the session
+can strand the run's output where it cannot be pushed.
 
 Tell every implementation worker that the parent already completed the branch gate so it must not
 ask again. Do not create commits, push, or open a pull request unless the user explicitly requests
-it.
+it, with one exception: in a hosted session, commit and push completed work to the session's own
+working branch as described under "Persist the Run in a Hosted Session".
 
 ## Choose Models Deliberately
 
@@ -271,7 +285,11 @@ Repeat until every task in `tasks.md` is complete:
    local `$task-reviewer` pass has no unresolved finding. Resume the worker or rerun the missing
    check before advancing when any evidence is absent or ambiguous.
 12. Append the task's entry to the run log before advancing. See "Keep a Durable Run Log".
-13. If either worker stopped on a fixable in-scope failure, steer it or spawn a replacement worker with
+13. In a hosted session, commit and push this task now, including its `tasks.md` status update and
+   the `ship-log.md` entry from step 12. See "Persist the Run in a Hosted Session". Do this after
+   both of those are written, never before the task's local review is clean, and never while a
+   baseline bundle for it is still open.
+14. If either worker stopped on a fixable in-scope failure, steer it or spawn a replacement worker with
    the failure evidence and continue. Do not skip ahead.
 
 Do not stop because the feature has many tasks or the run has taken multiple turns. Continue while
@@ -491,4 +509,51 @@ validation commands and exit statuses, and the next user decision or interventio
 that no fourth attempt was run and that completion or archival did not occur. Do not bury this alert
 under the normal completion summary or imply that the feature is ready.
 
-Produce a concise commit message, but do not commit unless explicitly asked.
+Produce a concise commit message. In a local run, stop there and do not commit unless explicitly
+asked. In a hosted session, the run has already been committed incrementally, so use this message
+for the final completion commit described below and report the branch every commit went to.
+
+## Persist the Run in a Hosted Session
+
+A hosted session works in a disposable clone on a working branch the runtime created for it, and
+that clone is reclaimed when the session expires or stops. Everything this workflow produces —
+`ship-log.md`, each task's `spec/` package, the implementation itself, and the archival move —
+lives only on that VM until it is pushed. A commit is not enough on its own: local commits are on
+the same disk and die with it. Only a push puts the work somewhere that survives the session.
+
+So in a hosted session, commit **and push** to the session's own working branch at each of these
+points, rather than once at the end:
+
+- After each task is complete — status updated, validation passed, local task review clean, and
+  its `ship-log.md` entry appended. This is step 13 of "Ship Every Task Sequentially".
+- After each repair pass that answers a feature-review finding, once its validation is green.
+- After completion status and archival or epic handoff are verified, as the run's final commit.
+
+Commit the whole tree state at that moment, always including the `ship-log.md` entry for what just
+finished, so the durable run record advances with the work it describes and a resumed run reads
+timing, routing, and cycle counts from the branch rather than from a lost VM. Message each commit
+for what it contains — the task identifier, the repair, or the final report's concise message —
+and push it immediately; a commit that is never pushed protects nothing. A run that ends early then
+leaves every finished task durable on the branch, and loses at most the task in flight.
+
+Committing between tasks is safe for the per-task baseline. That baseline compares captured tree
+states through a temporary index, so it measures one task's delta identically whether prior tasks
+are committed or uncommitted; committing simply leaves less prior uncommitted state to distinguish.
+Still take each commit only after that task's review is finished and its baseline bundle is
+released, so nothing captures a tree mid-repair.
+
+A lifecycle or stop-hook request to commit is not a task or repair boundary. Never commit
+implementation code while editing, validation, or review is incomplete. If the runtime requires an
+interim persistence response, commit and push only the updated run log, clearly recording that the
+task or repair remains in flight; otherwise defer persistence until the next verified boundary.
+
+If a push is rejected, do not work around it by creating or switching branches — that strands the
+work further. Record the rejection and its reason in `ship-log.md`, keep committing locally at the
+same points so the history is ready to push, surface it once in the final report, and continue.
+
+Report the branch and the final commit in the final report.
+
+Nothing here widens any other permission. Never push to a branch other than the session's own, never
+open a pull request, never merge, and never commit in a local run. In a local run the user's working
+tree is shared with their own work and other agents, so an uninvited commit there is a different act
+entirely, and this exception does not reach it.
