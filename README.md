@@ -167,6 +167,15 @@ Run the three skills yourself, stopping between each:
 | --- | --- |
 | `ship-task` | Runs shape + developer for exactly one task, then **stops** |
 
+Real task packages from this repository:
+
+- **Update Discover Architecture:** [task brief](ai/archive/features/reveal-0-122-skill-adapters/tasks/001-update-discover-architecture/brief.md)
+  → [shaped plan](ai/archive/features/reveal-0-122-skill-adapters/tasks/001-update-discover-architecture/spec/plan.md)
+  → [implementation references](ai/archive/features/reveal-0-122-skill-adapters/tasks/001-update-discover-architecture/spec/references.md)
+- **Update Trace Domain Flow:** [task brief](ai/archive/features/reveal-0-122-skill-adapters/tasks/002-update-trace-domain-flow/brief.md)
+  → [shaped plan](ai/archive/features/reveal-0-122-skill-adapters/tasks/002-update-trace-domain-flow/spec/plan.md)
+  → [implementation references](ai/archive/features/reveal-0-122-skill-adapters/tasks/002-update-trace-domain-flow/spec/references.md)
+
 ### A whole feature — multi-step work
 
 Plan it, break it into reviewable tasks, then run to completion with an independent readiness gate.
@@ -176,11 +185,27 @@ Plan it, break it into reviewable tasks, then run to completion with an independ
 | `architect-feature` | Feature plan, visual design, `tasks.md`, and task briefs — pauses for approval |
 | `ship-feature` | Runs every remaining task, then up to three independent reviews |
 
+Completed feature example: **Reveal 0.122 Skill Adapters** — [feature plan](ai/archive/features/reveal-0-122-skill-adapters/feature.md)
+→ [ordered task list](ai/archive/features/reveal-0-122-skill-adapters/tasks.md)
+→ [ship and review log](ai/archive/features/reveal-0-122-skill-adapters/ship-log.md).
+
 ```text
 discover-architecture → architect-feature → shape-spec → developer → task-reviewer
                         ↓       OR       ↓
                     ship-feature      ship-task (repeat until tasks are done)
 ```
+
+### An epic — several features under one outcome
+
+Use an epic when several related features need a shared goal, non-goals, and implementation order.
+Each feature still moves through the workflow above; `epic.md` provides the durable decision record
+and completion checklist for the larger body of work.
+
+Completed external example: **Google Drive Markdown Gateway** — [epic plan and feature checklist](https://github.com/kalwalkden/w27-google-drive-markdown-gateway/blob/main/ai/features/epics/google-drive-markdown-gateway/epic.md)
+→ [Drive Core feature plan](https://github.com/kalwalkden/w27-google-drive-markdown-gateway/blob/main/ai/features/epics/google-drive-markdown-gateway/01-drive-core/feature.md)
+→ [ordered task list](https://github.com/kalwalkden/w27-google-drive-markdown-gateway/blob/main/ai/features/epics/google-drive-markdown-gateway/01-drive-core/tasks.md)
+→ [shaped task spec](https://github.com/kalwalkden/w27-google-drive-markdown-gateway/blob/main/ai/features/epics/google-drive-markdown-gateway/01-drive-core/tasks/001-domain-contracts-and-safe-resolution/spec/plan.md).
+[Browse the complete epic package](https://github.com/kalwalkden/w27-google-drive-markdown-gateway/tree/main/ai/features/epics/google-drive-markdown-gateway).
 
 ## How this compares
 
