@@ -21,98 +21,114 @@ This toolkit gives AI-assisted delivery a durable operating model: **inspect the
 decision trail explicit, shape a narrow plan, validate the result, and review it independently before
 calling it done.**
 
+<p align="center">
+  <img src="assets/evidence-workflow.svg" alt="The evidence-based workflow and its skills: discover-architecture inspects the repository, architect-feature plans through human approval, shape-spec shapes each task, developer builds it, task-reviewer and feature-reviewer inspect the diffs, and archive-work-artifact preserves the evidence" width="100%">
+</p>
+
+Every arrow in the diagram is a handoff backed by files in the repository. The conversation can end;
+the next stage still has the evidence it needs.
+
 ## See it in 60 seconds
 
-Install the skills. The installer tells you explicitly what it will do before it does anything:
+Install the toolkit, then try it from the root of a repository you want to understand or change.
+The dry run is read-only; the final command creates links for both Codex and Claude Code.
 
 ```bash
+git clone https://github.com/kalwalkden/evidence-based-ai-engineering.git
+cd evidence-based-ai-engineering
 ./sync-installable-skills.sh --dry-run
-```
-
-```text
-Linking: ~/.codex/skills/architect-feature -> evidence-based-ai-engineering/architect-feature
-Linking: ~/.codex/skills/discover-architecture -> evidence-based-ai-engineering/discover-architecture
-Linking: ~/.codex/skills/ship-task -> evidence-based-ai-engineering/ship-task
-...
-Would record 20 managed link(s) in ~/.local/state/sync-installable-skills/...
-Dry run complete. No changes were made.
-```
-
-Then drive a feature through the loop. Each step hands the next one evidence rather than vibes:
-
-```text
-you ▸ Use discover-architecture on this repo.
-      → docs/architecture.md — stack, conventions, hotspots, and the canonical
-        lint/type-check/test commands, all read from the repo rather than assumed.
-
-you ▸ Use architect-feature for per-org rate limiting.
-      → ai/features/rate-limiting/feature.md   the plan and its tradeoffs
-        ai/features/rate-limiting/tasks.md     an ordered, human-reviewable task list
-        ai/features/rate-limiting/tasks/…      one brief per task
-      ⏸  Stops for your approval before writing briefs.
-
-you ▸ Ship the next task.
-      → tasks/01-token-bucket/spec/     scope, call paths, constraints, what stays unchanged
-        a small diff + tests, validated with the commands discovery found
-
-you ▸ Review the feature.
-      → an independent, read-only pass in a fresh context — reads the real diff,
-        returns findings and a Ready / Not ready verdict it cannot grant itself.
-```
-
-The artifacts are noisy, but they are the point. When someone asks *why is this code like this*, the answer is in the
-repository, next to the code, not lost.
-
-## Three problems it solves
-
-**1. The agent changed more than you asked, and you cannot tell what or why.**
-Work is shaped into one task at a time against a written spec that names the files in scope *and the
-boundaries that stay unchanged*. The review step resolves the exact diff for that task. The delta
-is attributable instead of tangled with unrelated edits.
-
-**2. "Done" means the model said it was done.**
-Implementation never self-certifies. The feature review runs read-only in a fresh context  - ideally
-on a different model. It returns a verdict against the actual git diff. An agent cannot mark its own
-work done and cannot quietly fudge "tests didn't run" into "ready!"
-
-**3. The reasoning evaporates when the conversation ends.**
-Plans, specs, decisions, tradeoffs, and validation evidence are written to `ai/` beside the code and
-archived on completion. The next engineer, or you in six months, inherits the decision
-trail.
-
-## Why it is designed this way
-
-The separation between planning, shaping, implementation, and independent review is deliberate. It
-keeps decisions durable, limits context leakage, and makes each result attributable to the evidence
-available at that stage. See [Design principles](docs/design-principles.md) for the reasoning behind
-the workflow, review boundaries, model routing, and artifact lifecycle.
-
-## Quick start
-
-The smallest safe path is three commands. Nothing is installed until you've seen the plan.
-
-```bash
-git clone https://github.com/kalwalkden/evidence-based-ai-engineering.git && cd evidence-based-ai-engineering
-```
-
-**1. Preview.** Don't skip this, it shows every link that would change.
-
-```bash
-./sync-installable-skills.sh --dry-run
-```
-
-**2. Install.** Creates symlinks in `~/.codex/skills` and `~/.claude/skills`.
-
-```bash
 ./sync-installable-skills.sh
 ```
 
-**3. Start small.** In your own repo, run discovery first. It is read-only and produces a report you
-can judge the toolkit by before trusting it with a change:
+Start a new Codex or Claude Code session in your target repository so it discovers the installed
+skills. Then send these prompts in order. They are agent prompts, not shell commands.
+
+**1. Map the repository before asking for a change.**
 
 ```text
 Use discover-architecture on this repository.
 ```
+
+Discovery does not change application code. It writes two documentation updates:
+`ARCHITECTURE.md` records the stack, conventions, hotspots, and real validation commands; a managed
+block in `AGENTS.md` makes those commands available to later stages.
+
+**2. Turn an outcome into a reviewable feature plan.** Be specific about behavior that must not
+change.
+
+```text
+Use architect-feature to plan per-organization rate limiting. Keep existing per-user limits and the
+public API unchanged.
+```
+
+The architect writes `ai/features/<feature-slug>/feature.md` and `tasks.md`, then stops before task
+briefs are final. Read the proposed scope, non-goals, tradeoffs, and task order. Answer any open
+questions. When it matches your intent, say:
+
+```text
+I approve the feature plan. Create the task briefs.
+```
+
+**3. Choose how much to ship.** Use the exact feature path reported by the architect.
+
+```text
+Ship the next task for ai/features/<feature-slug>.
+```
+
+That shapes, implements, tests, and reviews one bounded task, then stops. To run every remaining
+task, the independent feature review, and archival in one workflow, use:
+
+```text
+Ship the feature at ai/features/<feature-slug>.
+```
+
+## Three problems it solves
+
+**1. The agent begins from a plausible guess instead of the repository in front of it.** Framework
+conventions, test commands, and likely call paths are verified before planning. Discovery records
+what it found in `ARCHITECTURE.md`; task shaping checks the current tree again immediately before
+implementation. A familiar-looking codebase is never treated as proof of how this one works.
+
+**2. The change drifts beyond the request, then the same agent declares it done.** Feature approval
+locks the intended outcome, non-goals, and task order before code changes. Each task gets a focused
+spec that names its boundaries. Validation uses the repository's actual commands, and the final
+feature review reads the cumulative diff in a fresh, read-only context. Missing checks remain
+missing; they are not translated into success.
+
+**3. The reasoning disappears with the chat.** Plans, rejected alternatives, task contracts, and
+references live under `ai/` beside the code; whole-feature runs also keep their validation and review
+record there. Completed work moves to `ai/archive/` instead of being discarded. A reviewer today, a
+client next month, or an engineer six months later can reconstruct both what changed and why.
+
+## Why it is designed this way
+
+The workflow separates kinds of reasoning that create different failure modes when collapsed into
+one long agent session:
+
+- **Discovery establishes facts.** Planning starts from observed code, configuration, and tests, not
+  a model's memory of a similar stack.
+- **Architecture records decisions.** Humans approve product scope, tradeoffs, and meaningful
+  boundaries; agents resolve facts that can be checked in the repository.
+- **Shaping happens just in time.** A feature plan stays stable while the next task's implementation
+  map is refreshed against the tree as it exists now, after earlier tasks have landed.
+- **Implementation stays bounded.** One written task contract produces one attributable diff, tests,
+  and validation record.
+- **Review remains independent.** A read-only reviewer in a fresh context judges the actual change
+  without inheriting the implementer's assumptions or quietly repairing what it is judging.
+- **Artifacts outlive sessions.** The repository, not conversation history, is the system of record
+  for decisions and evidence.
+
+This costs more time and model calls than an ad-hoc prompt. That is intentional for work where
+scope, correctness, and the ability to explain the result matter; it is unnecessary ceremony for a
+typo. See [Design principles](docs/design-principles.md) for the full reasoning behind progressive
+commitment, review boundaries, model routing, parallel investigation, and the artifact lifecycle.
+
+## Installation details
+
+The commands in [See it in 60 seconds](#see-it-in-60-seconds) create symlinks in
+`~/.codex/skills` and `~/.claude/skills`; they do not copy or move the toolkit. Keep the cloned
+repository in place after installation. Pull future updates there, then run the installer again to
+add, repair, or retire the links managed by this checkout.
 
 The installer only manages its own links. It records what it installed, removes only those links when
 a skill is later dropped from the list, and never touches real files, real directories, or symlinks
@@ -151,6 +167,15 @@ Run the three skills yourself, stopping between each:
 | --- | --- |
 | `ship-task` | Runs shape + developer for exactly one task, then **stops** |
 
+Real task packages from this repository:
+
+- **Update Discover Architecture:** [task brief](ai/archive/features/reveal-0-122-skill-adapters/tasks/001-update-discover-architecture/brief.md)
+  → [shaped plan](ai/archive/features/reveal-0-122-skill-adapters/tasks/001-update-discover-architecture/spec/plan.md)
+  → [implementation references](ai/archive/features/reveal-0-122-skill-adapters/tasks/001-update-discover-architecture/spec/references.md)
+- **Update Trace Domain Flow:** [task brief](ai/archive/features/reveal-0-122-skill-adapters/tasks/002-update-trace-domain-flow/brief.md)
+  → [shaped plan](ai/archive/features/reveal-0-122-skill-adapters/tasks/002-update-trace-domain-flow/spec/plan.md)
+  → [implementation references](ai/archive/features/reveal-0-122-skill-adapters/tasks/002-update-trace-domain-flow/spec/references.md)
+
 ### A whole feature — multi-step work
 
 Plan it, break it into reviewable tasks, then run to completion with an independent readiness gate.
@@ -160,11 +185,27 @@ Plan it, break it into reviewable tasks, then run to completion with an independ
 | `architect-feature` | Feature plan, visual design, `tasks.md`, and task briefs — pauses for approval |
 | `ship-feature` | Runs every remaining task, then up to three independent reviews |
 
+Completed feature example: **Reveal 0.122 Skill Adapters** — [feature plan](ai/archive/features/reveal-0-122-skill-adapters/feature.md)
+→ [ordered task list](ai/archive/features/reveal-0-122-skill-adapters/tasks.md)
+→ [ship and review log](ai/archive/features/reveal-0-122-skill-adapters/ship-log.md).
+
 ```text
 discover-architecture → architect-feature → shape-spec → developer → task-reviewer
                         ↓       OR       ↓
                     ship-feature      ship-task (repeat until tasks are done)
 ```
+
+### An epic — several features under one outcome
+
+Use an epic when several related features need a shared goal, non-goals, and implementation order.
+Each feature still moves through the workflow above; `epic.md` provides the durable decision record
+and completion checklist for the larger body of work.
+
+Completed external example: **Google Drive Markdown Gateway** — [epic plan and feature checklist](https://github.com/kalwalkden/w27-google-drive-markdown-gateway/blob/main/ai/features/epics/google-drive-markdown-gateway/epic.md)
+→ [Drive Core feature plan](https://github.com/kalwalkden/w27-google-drive-markdown-gateway/blob/main/ai/features/epics/google-drive-markdown-gateway/01-drive-core/feature.md)
+→ [ordered task list](https://github.com/kalwalkden/w27-google-drive-markdown-gateway/blob/main/ai/features/epics/google-drive-markdown-gateway/01-drive-core/tasks.md)
+→ [shaped task spec](https://github.com/kalwalkden/w27-google-drive-markdown-gateway/blob/main/ai/features/epics/google-drive-markdown-gateway/01-drive-core/tasks/001-domain-contracts-and-safe-resolution/spec/plan.md).
+[Browse the complete epic package](https://github.com/kalwalkden/w27-google-drive-markdown-gateway/tree/main/ai/features/epics/google-drive-markdown-gateway).
 
 ## How this compares
 
