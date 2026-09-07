@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title description">
+  <title id="title">From request to defensible change</title>
+  <desc id="description">The ship-task and ship-feature orchestrators coordinate a two-lane workflow. Discover-architecture inspects the repository. Architect-feature plans the feature, pauses for human approval, then creates task briefs. Shape-spec shapes one bounded task. Developer builds and validates it. Task-reviewer checks each task diff and feature-reviewer independently checks the assembled feature. Findings return to implementation. Archive-work-artifact preserves a ready feature and its evidence.</desc>
+
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#050806"/>
+      <stop offset="58%" stop-color="#080d0a"/>
+      <stop offset="100%" stop-color="#11170f"/>
+    </linearGradient>
+    <linearGradient id="evidenceRail" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8a6d3b" stop-opacity="0.18"/>
+      <stop offset="48%" stop-color="#c6a36d" stop-opacity="0.38"/>
+      <stop offset="100%" stop-color="#f4dfbb" stop-opacity="0.22"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-15%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c6a36d"/>
+    </marker>
+    <marker id="mutedArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#718075"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="760" rx="22" fill="url(#background)"/>
+  <rect x="1.5" y="1.5" width="1197" height="757" rx="20.5" fill="none" stroke="#c6a36d" stroke-opacity="0.3" stroke-width="3"/>
+  <rect x="0" y="0" width="1200" height="5" rx="2.5" fill="#c6a36d"/>
+
+  <g font-family="'Avenir Next', Avenir, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+    <text x="60" y="70" font-size="34" font-weight="650" fill="#f4dfbb" letter-spacing="-0.3">From request to defensible change</text>
+    <text x="60" y="104" font-size="17" fill="#f3f5ef" fill-opacity="0.66">Each stage has one job. Each handoff leaves evidence in the repository.</text>
+
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+      <rect x="768" y="35" width="168" height="53" rx="10" fill="#111912" stroke="#46564a"/>
+      <text x="784" y="54" font-size="9.5" font-weight="700" letter-spacing="1.2" fill="#8f9c92">ONE TASK</text>
+      <text x="784" y="76" font-size="13" font-weight="650" fill="#dbc79f">$ship-task</text>
+      <rect x="952" y="35" width="188" height="53" rx="10" fill="#242116" stroke="#c6a36d"/>
+      <text x="968" y="54" font-size="9.5" font-weight="700" letter-spacing="1.2" fill="#c6a36d">WHOLE FEATURE</text>
+      <text x="968" y="76" font-size="13" font-weight="650" fill="#f4dfbb">$ship-feature</text>
+    </g>
+
+    <g font-size="12" font-weight="650" letter-spacing="1.5">
+      <text x="60" y="153" fill="#c6a36d">CHOOSE YOUR TASK</text>
+      <text x="60" y="393" fill="#c6a36d">DELIVER ONE BOUNDED TASK</text>
+    </g>
+
+    <!-- decision lane connectors -->
+    <g fill="none" stroke="#c6a36d" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M 366 259 H 432"/>
+      <path d="M 758 259 H 824"/>
+      <path d="M 978 336 V 370 H 216 V 410"/>
+    </g>
+
+    <!-- delivery lane connectors -->
+    <g fill="none" stroke="#c6a36d" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M 366 509 H 432"/>
+      <path d="M 758 509 H 824"/>
+      <path d="M 978 586 V 617"/>
+    </g>
+
+    <!-- review repair loop -->
+    <path d="M 872 586 C 840 620, 738 620, 706 586" fill="none" stroke="#718075" stroke-width="1.8" stroke-dasharray="5 6" marker-end="url(#mutedArrow)"/>
+    <rect x="738" y="596" width="104" height="22" rx="6" fill="#080d0a"/>
+    <text x="790" y="611" text-anchor="middle" font-size="12" font-weight="600" fill="#a9b3ac">findings → repair</text>
+
+    <!-- discover -->
+    <g filter="url(#softShadow)">
+      <rect x="60" y="174" width="306" height="162" rx="15" fill="#0d1410" stroke="#46564a"/>
+      <circle cx="91" cy="205" r="15" fill="#243128" stroke="#718075"/>
+      <text x="91" y="210" text-anchor="middle" font-size="13" font-weight="700" fill="#f3f5ef">1</text>
+      <text x="118" y="211" font-size="21" font-weight="650" fill="#f3f5ef">Inspect the real repo</text>
+      <text x="84" y="238" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="650" fill="#c6a36d">SKILL  $discover-architecture</text>
+      <text x="84" y="261" font-size="14" fill="#c2cac3">Stack · conventions · hotspots</text>
+      <text x="84" y="283" font-size="14" fill="#c2cac3">Actual lint, type-check, and test commands</text>
+      <rect x="84" y="296" width="157" height="25" rx="7" fill="#19221b"/>
+      <text x="96" y="313" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#dbc79f">ARCHITECTURE.md</text>
+    </g>
+
+    <!-- architect -->
+    <g filter="url(#softShadow)">
+      <rect x="432" y="174" width="326" height="162" rx="15" fill="#0d1410" stroke="#46564a"/>
+      <circle cx="463" cy="205" r="15" fill="#243128" stroke="#718075"/>
+      <text x="463" y="210" text-anchor="middle" font-size="13" font-weight="700" fill="#f3f5ef">2</text>
+      <text x="490" y="211" font-size="21" font-weight="650" fill="#f3f5ef">Make decisions explicit</text>
+      <text x="456" y="238" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="650" fill="#c6a36d">SKILL  $architect-feature</text>
+      <text x="456" y="261" font-size="14" fill="#c2cac3">Outcome · non-goals · tradeoffs · task order</text>
+      <text x="456" y="283" font-size="14" fill="#c2cac3">Surface choices only a human should make</text>
+      <rect x="456" y="296" width="209" height="25" rx="7" fill="#19221b"/>
+      <text x="468" y="313" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#dbc79f">feature.md · tasks.md</text>
+    </g>
+
+    <!-- approval gate -->
+    <g filter="url(#softShadow)">
+      <rect x="824" y="174" width="316" height="162" rx="15" fill="#242116" stroke="#c6a36d" stroke-width="1.5"/>
+      <circle cx="855" cy="205" r="15" fill="#493b24" stroke="#c6a36d"/>
+      <path d="M 848 205 l 5 5 l 10 -12" fill="none" stroke="#f4dfbb" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="882" y="211" font-size="21" font-weight="650" fill="#f4dfbb">Human approval gate</text>
+      <text x="848" y="238" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="650" fill="#c6a36d">YOU APPROVE · $architect-feature RESUMES</text>
+      <text x="848" y="261" font-size="14" fill="#e5d6b9">Confirm scope, boundaries, and sequencing</text>
+      <text x="848" y="283" font-size="14" fill="#e5d6b9">Resolve open decisions before code changes</text>
+      <rect x="848" y="296" width="192" height="25" rx="7" fill="#352d1d"/>
+      <text x="860" y="313" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#f4dfbb">approved task briefs</text>
+    </g>
+
+    <!-- shape -->
+    <g filter="url(#softShadow)">
+      <rect x="60" y="424" width="306" height="162" rx="15" fill="#0d1410" stroke="#46564a"/>
+      <circle cx="91" cy="455" r="15" fill="#243128" stroke="#718075"/>
+      <text x="91" y="460" text-anchor="middle" font-size="13" font-weight="700" fill="#f3f5ef">3</text>
+      <text x="118" y="461" font-size="21" font-weight="650" fill="#f3f5ef">Shape against today’s tree</text>
+      <text x="84" y="488" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="650" fill="#c6a36d">SKILL  $shape-spec</text>
+      <text x="84" y="511" font-size="14" fill="#c2cac3">Verify call paths and constraints</text>
+      <text x="84" y="533" font-size="14" fill="#c2cac3">Name what stays unchanged</text>
+      <rect x="84" y="546" width="189" height="25" rx="7" fill="#19221b"/>
+      <text x="96" y="563" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#dbc79f">spec/plan.md · references</text>
+    </g>
+
+    <!-- build -->
+    <g filter="url(#softShadow)">
+      <rect x="432" y="424" width="326" height="162" rx="15" fill="#0d1410" stroke="#46564a"/>
+      <circle cx="463" cy="455" r="15" fill="#243128" stroke="#718075"/>
+      <text x="463" y="460" text-anchor="middle" font-size="13" font-weight="700" fill="#f3f5ef">4</text>
+      <text x="490" y="461" font-size="21" font-weight="650" fill="#f3f5ef">Build and validate</text>
+      <text x="456" y="488" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="650" fill="#c6a36d">SKILL  $developer</text>
+      <text x="456" y="511" font-size="14" fill="#c2cac3">Small diff · focused tests · canonical checks</text>
+      <text x="456" y="533" font-size="14" fill="#c2cac3">Failed or missing checks stay visible</text>
+      <rect x="456" y="546" width="180" height="25" rx="7" fill="#19221b"/>
+      <text x="468" y="563" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#dbc79f">code · tests · results</text>
+    </g>
+
+    <!-- review -->
+    <g filter="url(#softShadow)">
+      <rect x="824" y="424" width="316" height="162" rx="15" fill="#111711" stroke="#c6a36d" stroke-width="1.5"/>
+      <circle cx="855" cy="455" r="15" fill="#493b24" stroke="#c6a36d"/>
+      <text x="855" y="460" text-anchor="middle" font-size="13" font-weight="700" fill="#f4dfbb">5</text>
+      <text x="882" y="461" font-size="21" font-weight="650" fill="#f4dfbb">Review the actual diff</text>
+      <text x="848" y="488" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.8" font-weight="650" fill="#c6a36d">SKILLS  $task-reviewer · $feature-reviewer</text>
+      <text x="848" y="511" font-size="14" fill="#c2cac3">Task diff first · cumulative feature diff last</text>
+      <text x="848" y="533" font-size="14" fill="#c2cac3">Fresh, read-only feature readiness verdict</text>
+      <rect x="848" y="546" width="202" height="25" rx="7" fill="#26231a"/>
+      <text x="860" y="563" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#f4dfbb">findings · readiness</text>
+    </g>
+
+    <!-- durable evidence rail -->
+    <rect x="60" y="632" width="1080" height="76" rx="16" fill="url(#evidenceRail)" stroke="#c6a36d" stroke-opacity="0.7"/>
+    <g transform="translate(89 653)">
+      <path d="M 0 8 h 20 l 8 8 h 33 v 27 h -61 z" fill="none" stroke="#f4dfbb" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M 0 16 h 61" stroke="#f4dfbb" stroke-width="1.8"/>
+    </g>
+    <text x="173" y="663" font-size="12" font-weight="700" fill="#c6a36d" letter-spacing="1.3">DURABLE EVIDENCE TRAIL</text>
+    <text x="173" y="690" font-size="15" fill="#f3f5ef">Facts → decisions → task contract → diff + tests → independent findings</text>
+    <rect x="909" y="644" width="203" height="52" rx="9" fill="#30291c" stroke="#c6a36d"/>
+    <text x="1010.5" y="665" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="650" fill="#f4dfbb">$archive-work-artifact</text>
+    <text x="1010.5" y="685" text-anchor="middle" font-size="12" font-weight="600" fill="#e5d6b9">Ready → ai/archive/</text>
+  </g>
+</svg>
