@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "model": "claude-sonnet-4-6",
+  "effort": "high",
+  "seed": 20260909,
+  "repetitions": 1,
+  "modes": [
+    "independent",
+    "chained"
+  ],
+  "budget_per_session_usd": 2,
+  "campaign_budget_usd": 50,
+  "timeout_seconds": 900,
+  "max_turns": 40,
+  "claude_command": [
+    "claude"
+  ],
+  "arms": {
+    "baseline": {
+      "instructions": "For this run, skip the skills' optional Reveal enrichment and use their ordinary file reading and search fallback. Do not use reveal or ast-grep, including in skill handoffs. Preserve every other skill requirement."
+    },
+    "reveal": {
+      "version_command": [
+        "reveal",
+        "--version"
+      ],
+      "instructions": "For this run, follow the skills' existing optional Reveal enrichment guidance, including local capability checks and source verification. Do not use ast-grep. Preserve every other skill requirement."
+    },
+    "ast-grep": {
+      "version_command": [
+        "ast-grep",
+        "--version"
+      ],
+      "instructions": "For this run, use ast-grep where useful in place of the skills' optional Reveal enrichment. Inspect ast-grep --help before assuming syntax or support. Skip Reveal-specific commands and capability gates; preserve the evidence, verification, and fallback requirements. Do not use reveal. Preserve every other skill requirement."
+    }
+  },
+  "repositories": [
+    {
+      "id": "example",
+      "path": "/REPLACE/with/local/repository",
+      "ref": "HEAD",
+      "language": "python",
+      "context": "The build prompt must name an approved task/spec package in this commit. The flow prompt must name a concrete flow. Follow this repository's normal instructions.",
+      "prepare": [],
+      "tasks": [
+        {
+          "skill": "build",
+          "prompt_file": "tasks/build.md",
+          "checks": []
+        },
+        {
+          "skill": "flow",
+          "prompt_file": "tasks/flow.md",
+          "checks": []
+        },
+        {
+          "skill": "architecture",
+          "prompt_file": "tasks/architecture.md",
+          "checks": []
+        }
+      ]
+    }
+  ]
+}

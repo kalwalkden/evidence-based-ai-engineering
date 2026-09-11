@@ -123,6 +123,13 @@ scope, correctness, and the ability to explain the result matter; it is unnecess
 typo. See [Design principles](docs/design-principles.md) for the full reasoning behind progressive
 commitment, review boundaries, model routing, parallel investigation, and the artifact lifecycle.
 
+## Compare code inspection tools
+
+Use the [prompts for Claude](benchmarks/agent_tools/PROMPTS.md) to compare inspection tools with this
+repository's installed `developer`, `trace-domain-flow`, and `discover-architecture` skills.
+Run one experiment per codebase project in Claude, then bring its `results.json` back for evaluation.
+The [harness](benchmarks/agent_tools/README.md) records tokens, reported cost, tests, and skill artifacts.
+
 ## Installation details
 
 The commands in [See it in 60 seconds](#see-it-in-60-seconds) create symlinks in
