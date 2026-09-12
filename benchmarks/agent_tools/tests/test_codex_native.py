@@ -51,7 +51,7 @@ def token(response_id="response", **values):
     )
 
 
-def test_dedup_subset_accounting_and_visible_evidence(tmp_path):
+def test_duplicate_subset_accounting_and_visible_evidence(tmp_path):
     source = rollout(
         tmp_path,
         token(),

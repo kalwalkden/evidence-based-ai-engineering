@@ -27,6 +27,9 @@ all their usage. Do not rank tools from one repetition alone or infer quality fr
 Bring the self-contained `reports/results.json` back for evaluation and later blog writing.
 Review project-sensitive evidence before publishing it.
 
+The [local preflight record](PREFLIGHT.md) records what was tested and what remains machine-specific.
+The [example tool configuration](codex-tools.example.json) matches the tested project versions.
+
 ## Move to another machine
 
 Check in this directory and the root README changes. Include the newly added Python files,

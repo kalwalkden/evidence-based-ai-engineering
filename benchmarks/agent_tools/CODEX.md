@@ -39,7 +39,7 @@ and collect evidence. Never substitute external model processes if native capabi
    establish task readiness. Missing versions/skills and mismatched commands are blockers.
 6. Create a throwaway checkout at the frozen commit with a separate Git directory, no remote,
    and hooks disabled. Ordinary Git operations or `harness.checkout` may prepare it; never invoke
-   `harness.py run`. Prepare dependencies from the project's lockfiles inside that checkout.
+   `harness.py run`. Prepare dependencies from the project's lock files inside that checkout.
    Do not share writable dependency directories between trials. Record preparation commands and
    any resulting tracked changes; unexplained source changes block launch.
 7. Run one small native smoke worker before any measured trials. In this environment use

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Local preflight and filtered evidence for native Codex workers; never launches models."""
 
+# cspell:words PYTHONDONTWRITEBYTECODE
+
 from __future__ import annotations
 
 import argparse
