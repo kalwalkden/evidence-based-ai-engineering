@@ -1,0 +1,10 @@
+{
+  "reveal": {
+    "argv": [".venv/bin/reveal"],
+    "version": "0.127.0"
+  },
+  "ast-grep": {
+    "argv": ["ast-grep"],
+    "version": "0.45.3"
+  }
+}

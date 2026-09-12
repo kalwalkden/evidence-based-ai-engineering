@@ -1,71 +1,59 @@
-# Prompts to paste into Claude Code
+# Prompts for Codex
 
-Use one Claude project per codebase. Paste these prompts there, where your skills are already
-installed. Replace bracketed values. The toolkit directory is the checkout containing this harness.
-After the run, bring `reports/results.json` back to the conversation where we designed the
-experiment. We will evaluate that file and compare the codebases there.
+Open the target codebase in Codex on the machine that will run the experiment.
+Replace the three task/location inputs. Repository, revision, and languages are discovered locally.
 
-## 1. Set up the experiment
+## 1. Prepare and preflight
 
 ```text
-Set up a pilot experiment using the existing harness at:
-[toolkit checkout]/benchmarks/agent_tools/
-
-This tests MY installed evidence-based-ai-engineering skills:
-- developer: implement the approved task, including its normal validation and handoffs.
-- task-reviewer: review that implementation against its full task/spec and exact diff within
-  the build session, following its read-only review contract and normal developer repair loop.
-- trace-domain-flow: trace the named flow and write/cross-link its normal documents.
-- discover-architecture: produce its normal ARCHITECTURE.md and AGENTS.md updates.
+Prepare a native Codex experiment using the protocol at:
+[toolkit checkout]/benchmarks/agent_tools/CODEX.md
 
 Approved task/spec: [repository-relative path]
-Flow to trace: [concrete flow and entry point]
-Experiment files and results: [directory outside the codebase]
+Flow to trace: [concrete existing flow and entry point]
 
-Use the repository open in this Claude session as the codebase and resolve its root automatically.
-Derive the starting revision from its current HEAD and infer its implementation
-languages from the source and project configuration. Record both in the experiment configuration
-and freeze the resolved commit in the plan. Flag any required spec or source changes that are
-uncommitted, since the experiment checkouts use committed files.
+Compare baseline, Reveal, and ast-grep using my already installed skills, preserving their full
+workflows. Use developer plus task-reviewer in the same build worker; trace-domain-flow for flow;
+discover-architecture for architecture. Keep both independent tasks and the build → flow →
+architecture sequence: 18 measured workers, serially, one repetition.
 
-Use the installed task-reviewer skill as the build review gate, not a separately supplied acceptance
-script. Keep the developer skill's normal tests and validation. Leave external checks empty in the
-configuration. Preserve review findings, the final assessment, and material test gaps in the output.
-Review in the current build context; do not add a separate reviewer session or subagent.
+Use this open repository. Discover local paths, commit, languages, and installed skill sources.
+Choose a new results directory outside the target source repository. Do not reuse Claude results.
+Follow CODEX.md to freeze tasks, exact tool commands and versions, skills, and the run order.
+Use the project-locked Reveal version when present, never silently use the global executable.
+Resolve tool commands separately in each isolated checkout. Preserve the assigned inspection tool
+throughout skill handoffs and review, including overrides of conflicting repository tool guidance.
 
-Compare baseline, reveal-cli, and ast-grep. Baseline uses ordinary file reading and search without
-reveal or ast-grep, including in skill handoffs. Keep the installed skills and my normal Claude
-setup. Do not use bare mode, replace the skill workflows, or build a new testing system.
-Only vary the optional inspection tool. Apply that choice to skill handoffs too.
+Run the local preflight and one small fresh native subagent smoke test. I authorize that setup
+worker; do not launch any measured trials yet. Verify checkout access, installed skills, fresh
+context, exact worker identity, and recovery of its local token/tool evidence. Account for this
+as overhead. Native workers must not inherit coordinator history or see other answers.
+Do not invoke Codex/Claude CLI model processes, SDK runners, or external model APIs.
 
-Configure both independent runs and a build → flow → architecture sequence, with one repetition.
-Use the harness defaults for model and limits for the pilot unless they are unsupported here.
-Read its README, create the three task prompt files and configuration, verify prerequisites,
-and generate the plan. Keep quality scoring separate from token and reported-cost accounting.
-
-Do not launch the experiment yet. Show the planned cases, session count, cost caps, and any
-missing input needed to run the actual skills. Do not invent missing spec decisions or answer keys.
+Record actual capabilities and unresolved blockers, including required browser/test access.
+Do not install or rewrite my skills. Do not change the original source checkout. Show the prepared
+plan, accounting coverage, and any destination-specific setup still needed, then stop.
 ```
 
 ## 2. Run the prepared experiment
 
 ```text
-Run the prepared experiment at [campaign directory] using the existing harness in
-[toolkit checkout]/benchmarks/agent_tools/.
+Run the prepared native Codex experiment following CODEX.md at the toolkit location already given.
+Use its saved plan and recheck the destination machine preflight. Run serially, using a fresh native
+subagent with no inherited conversation for every measured task. I authorize those workers.
+Use separate checkouts; keep all development tools and browser servers on the assigned checkout.
+Inherit one consistent coordinator model/effort configuration and record observed worker settings.
 
-Use normal headless Claude Code and the skills already installed here. Do not use bare mode,
-replace the skill instructions, or switch to a different agent. Keep the configuration's tool
-assignment in effect through the skills' handoffs.
+Independent tasks start at the frozen commit. Chained stages inherit only the previous stage's
+code and documents in a fresh checkout. Keep task-reviewer in the build worker, read-only during
+review. Required validation failures, incomplete browser checks, and unresolved findings block
+success even if the worker prints a passed marker. Do not advance a blocked chain.
 
-Execute the frozen plan. Preserve the transcript, skill artifacts, patches, validation results,
-tokens, and reported costs for every attempt. Keep independent and chained runs separate.
-Respect the configured caps and report failures or missing accounting without silently retrying.
+Collect each exact worker's saved token and tool evidence, review report, validation results,
+patch, and skill documents before launching the next worker. Stop if promised isolation or
+accounting fails. Preserve failed attempts; no silent retries. Keep setup/coordinator usage
+separate. Do not infer cost from account percentages or invent missing fields.
 
-If this Claude session cannot launch the headless child sessions, give me the exact existing
-harness command to run in a separate terminal. Do not redesign the experiment.
-
-When execution ends, run the existing report command to generate reports/results.json.
-Give me that single file and its full path so I can bring it back for evaluation. It must include
-the recorded tokens, costs, test output, documents, patches, and failures. Leave quality scores
-pending: we will evaluate them in the other conversation. Do not declare a winning tool.
+Produce the self-contained reports/results.json required by CODEX.md. Include all planned cases,
+including blocked and not-run cases, with quality pending. Give me its full path for evaluation.
 ```

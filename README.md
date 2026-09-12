@@ -125,10 +125,11 @@ commitment, review boundaries, model routing, parallel investigation, and the ar
 
 ## Compare code inspection tools
 
-Use the [prompts for Claude](benchmarks/agent_tools/PROMPTS.md) to compare inspection tools with this
-repository's installed `developer`, `trace-domain-flow`, and `discover-architecture` skills.
-Run one experiment per codebase project in Claude, then bring its `results.json` back for evaluation.
-The [harness](benchmarks/agent_tools/README.md) records tokens, reported cost, tests, and skill artifacts.
+Use the [prompts for Codex](benchmarks/agent_tools/PROMPTS.md) to compare inspection tools with this
+repository's installed `developer`, `task-reviewer`, `trace-domain-flow`, and `discover-architecture` skills.
+Run one experiment per codebase in a native Codex task, then bring its `results.json` back
+for evaluation. The [experiment guide](benchmarks/agent_tools/README.md) covers native workers,
+skill artifacts, and token/cost evidence, with unavailable measurements kept explicit.
 
 ## Installation details
 

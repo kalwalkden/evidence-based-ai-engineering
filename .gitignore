@@ -4,3 +4,6 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .venv/
+
+# Local experiment checkouts, transcripts, and results are not toolkit source.
+/test_output/
