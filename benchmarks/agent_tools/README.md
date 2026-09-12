@@ -16,6 +16,14 @@ Keep both independent tasks and a build → flow → architecture sequence. Thre
 and two modes give **18 measured workers**, run serially with fresh contexts. Chained stages inherit
 code and documents only. Preserve the skills' workflows; change only the inspection-tool assignment.
 
+The [validation policy](CODEX.md#required-toolchain-checks-and-validation-waivers) permits narrowly
+scoped required toolchain checks in every arm, while keeping code inspection restricted to the
+assigned tool. Explicit user-approved validation waivers carry through the campaign as recorded
+limitations; waived checks are never reported as passed. Setup freezes these rules into every
+worker prompt so the same conflict does not repeatedly interrupt the experiment.
+Interactive browser verification is excluded by default at the user's request. Normal automated
+tests, lint/type checks, builds, and task-reviewer remain part of the experiment.
+
 The coordinator uses native Codex subagents. Python helpers prepare/check local inputs and collect
 saved evidence; they never launch model processes. [codex_native.py](codex_native.py) checks exact
 executable versions and installed skill fingerprints, and exports per-worker token records and
