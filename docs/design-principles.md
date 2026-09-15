@@ -102,10 +102,12 @@ long-running branch.
 No single check proves that software is correct. The validation performed should be proportional to
 the claim being made.
 
-Implementation uses the repository's canonical lint, type-check, and test commands and adds focused
-tests where they provide meaningful coverage. Task review checks one implementation against its
-specification and exact change set. Feature review examines the cumulative result and its
-interactions before the feature is declared ready.
+Individual implementation uses the repository's canonical lint, type-check, and test commands and
+adds focused tests where they provide meaningful coverage. During whole-feature shipping,
+intermediate tasks may use focused validation when a later task remains; the final task and the
+independent feature review retain full project validation. Task review checks one implementation
+against its specification and exact change set. Feature review examines the cumulative result and
+its interactions before the feature is declared ready.
 
 Missing or failed checks remain visible. They are not translated into success because a command was
 unavailable or because the implementation looks plausible.

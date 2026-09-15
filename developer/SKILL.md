@@ -9,7 +9,7 @@ Use this skill when user wants implementation from approved feature task folder 
 
 ## Role
 
-You are a senior engineer implementing one approved task. Keep scope tight, prefer the repository’s existing patterns, make the smallest correct change, and validate with the full test suite before reporting done.
+You are a senior engineer implementing one approved task. Keep scope tight, prefer the repository’s existing patterns, make the smallest correct change, and apply the required validation policy before reporting done.
 
 ## Communication
 
@@ -80,7 +80,7 @@ If expected spec file missing, note it explicitly and stop unless user wants to 
 - If repo unfamiliar, use `$discover-architecture` skill first or inspect repo directly.
 - Make smallest code/refactor/dependency/tooling changes needed to complete task cleanly.
 - When referencing files in notes, plans, reports, use repository-relative paths rooted at repo top level unless calling environment explicitly requires absolute paths.
-- Always run the full test suite before committing or reporting done. Never skip it, never substitute a subset, never ask whether to run it. The answer is always yes.
+- Apply the validation policy below before committing or reporting done. Default to the full suite; only a verified `$ship-feature` intermediate-task dispatch may defer it.
 
 ## Ambiguity Handling
 
@@ -110,12 +110,14 @@ If expected spec file missing, note it explicitly and stop unless user wants to 
 
 Before reporting completion:
 
-- Discover repo canonical checks + full test-suite command.
-- If repo has no full test-suite command, say it explicitly and run closest available project-wide validation.
-- Also run relevant linters, type checks, aggregators needed for confidence.
+- Discover the repository's focused checks, canonical checks, full test-suite command, and full-validation command.
+- Use `full` validation by default. It requires the full test suite and applicable canonical project-wide checks. If the repository has no full test-suite command, say so and run the closest available project-wide validation.
+- Use `ship-feature-intermediate` validation only when the caller explicitly identifies itself as the `$ship-feature` parent, supplies the exact feature and task paths, and the on-disk `tasks.md` confirms that another task will remain incomplete after this task. Missing, ambiguous, stale, or ineligible context means `full`.
+- In `ship-feature-intermediate` mode, run meaningful task tests, affected integration or regression checks, and applicable lint or type checks selected from the spec and actual change surface. If no useful focused set exists, run `full`. Focused validation never permits ignoring a known failure or a stricter repository requirement.
+- A repair that responds to an independent feature-review finding always uses `full`, regardless of the owning task. An intermediate task's local task-review repair retains its verified mode; the task that completes the feature always uses `full`.
 - Review every new and modified code comment for references to tasks, tickets, feature requests, specs, prompts, implementation phases, or temporary planning artifacts. Remove those process references or rewrite them around the relevant code location, technical/business concept, or durable `/docs` document before reporting completion.
-- Fix issues and re-run until full test suite + selected checks pass.
-- Always run the full test suite at end of task before committing or reporting completion. Never skip, never substitute a subset, never ask.
+- Fix issues and rerun the checks required by the selected mode until they pass.
+- In `full` mode, run the full test suite at the end of the task before committing or reporting completion. Never substitute a subset. In `ship-feature-intermediate` mode, record that the full suite was deferred to the final task and independent review.
 - Do not claim validation you did not perform.
 
 ## Review Loop
@@ -195,7 +197,7 @@ Before reporting completion:
 - Always include a review loop after implementation. Invoke `$task-reviewer` in the current context
   when available; do not create a fresh thread, agent, or subagent solely for routine task review.
 - Preserve the original `TASK_BEFORE_TREE` for every review pass. After implementation and after each
-  repair, run the required affected checks and final full test suite, capture the latest worktree in
+  repair, run the validation required by the selected mode, capture the latest worktree in
   a fresh after-index path, and give `$task-reviewer` the delta from the original before-tree to that
   latest after-tree. Do not let earlier uncommitted task or user changes become part of the verdict.
 - If review returns an in-scope finding, repair it, rerun validation, capture a new after-tree with a
@@ -245,5 +247,5 @@ Archiving keeps active work directories small.
 When task done, report succinctly:
 
 - What changed and why
-- Validation performed
+- Validation mode, commands and exit statuses, coverage limits, and whether the full suite was deferred
 - Notable tradeoffs or residual risks
