@@ -164,6 +164,20 @@ same no-inherited-conversation property and say once which mechanism you used.
 If a runtime can only spawn workers that inherit the current conversation, stop; that defeats both
 the model-routing and the independent-review contract.
 
+## Select Validation Per Task
+
+Use `full` validation for the last remaining incomplete task and for every task unless this section
+explicitly selects `ship-feature-intermediate`. Read `tasks.md` from disk immediately before shaping
+and again immediately before implementation. The selected task is intermediate only when another
+task will remain incomplete after it; task numbers, remembered status, and feature-folder membership
+are not evidence. A one-task feature and the final task of a resumed run always use `full`.
+
+For an intermediate task, `ship-feature-intermediate` requires task tests, affected integration or
+regression checks, and applicable lint or type checks. It does not allow a known failure or stricter
+repository requirement to be ignored. The full test suite remains mandatory for the final task and
+for the independent `$feature-reviewer`. If focused checks cannot give useful confidence, select
+`full` instead. Feature-review repairs always use `full`, including repairs owned by an early task.
+
 ## Ship Every Task Sequentially
 
 Never run two write-capable workers concurrently in the same worktree. Read-heavy discovery may run
@@ -201,8 +215,8 @@ a skip to that gate, not an exit from the workflow.
 Repeat until every task in `tasks.md` is complete:
 
 1. Re-read `tasks.md` from disk and select the first incomplete task in implementation order.
-2. Inspect its `brief.md`, dependencies, feature-level implementation map, and relevant completed
-   tasks enough to select a shaping model.
+2. Inspect its `brief.md`, dependencies, feature-level implementation map, relevant completed
+   tasks, and validation mode from "Select Validation Per Task" enough to select a shaping model.
 3. Immediately before spawning, append a UTC shaping-start timestamp for this task. Spawn one shaping
    worker with the selected planner model. Start it with no inherited
    implementation conversation, using whatever mechanism the runtime provides for that; see
@@ -215,7 +229,10 @@ Repeat until every task in `tasks.md` is complete:
    tasks, and write a complete implementation handoff in spec/plan.md and spec/references.md. Include
    current file and symbol targets, the relevant call path, contracts and
    invariants, patterns, tests, expected unchanged boundaries, exact validation commands, and
-   uncertainties. Do not modify production code, tests, task status, or feature status. Do not ask
+   uncertainties. The parent selected `<validation-mode>` for this task. In `spec/plan.md` and
+   `spec/references.md`, distinguish checks required now from full commands deferred to the final
+   task and independent review when the mode is `ship-feature-intermediate`; retain both command
+   sets concretely. Do not modify production code, tests, task status, or feature status. Do not ask
    the user anything; you have no channel to them. If a material decision is unresolved, stop and
    return it as a blocking question with the options you considered. Return the task identifier,
    created or changed spec paths, resolved questions, and any blocker. Keep the return under about
@@ -229,8 +246,10 @@ Repeat until every task in `tasks.md` is complete:
    record the approved decision in the task spec or applicable feature artifact before finishing.
    When shaping completes, append its UTC end and elapsed wall-clock duration.
 5. Re-read the complete task package directly. Require both spec files and verify that the
-   implementation map is current, specific, and includes validation. Resume shaping if the handoff
-   is missing, vague, or still requires broad repository rediscovery.
+   implementation map is current, specific, includes validation, and distinguishes current checks
+   from deferred full commands when applicable. Re-read `tasks.md` and correct the mode or resume
+   shaping if task status changed. Resume shaping if the handoff is missing, vague, or still
+   requires broad repository rediscovery.
 6. Choose the implementation model and reasoning effort from the completed spec, remaining
    uncertainty, risk, and size. Record the shaping and implementation choices separately.
 7. Immediately before implementation, capture or require the worker to capture an exact read-only
@@ -253,19 +272,23 @@ Repeat until every task in `tasks.md` is complete:
    pre-implementation baseline bundle unchanged, or capture one the same way before editing. The
    bundle contains <baseline-sha>, <baseline-root>, <baseline-marker>, <temporary-git-directory>,
    <empty-git-config>, <real-git-directory>, <working-tree>, and <captured-head-tree>. Implement
-   exactly this task, run the required validation and full test suite, then capture the current tree
+   exactly this task. The parent selected `<validation-mode>` after reading `tasks.md`; verify that
+   mode against the current on-disk task status before editing. Apply the developer skill's
+   validation policy: only a verified `ship-feature-intermediate` task may defer the full suite;
+   `full` requires it. Run the required validation, then capture the current tree
    in that temporary Git directory and invoke the task-reviewer skill locally with the delta from the
    original before-tree, so the verdict covers only this task's staged, unstaged, new, and deleted
-   files. If review returns an in-scope finding, repair it, rerun validation and the final full test
-   suite, capture a new after-tree through a fresh after-index path, and rerun task-reviewer from the
+   files. If review returns an in-scope finding, repair it, rerun validation required by the
+   selected mode, capture a new after-tree through a fresh after-index path, and rerun task-reviewer from the
    original before-tree to the latest after-tree. Repeat until that exact latest target receives
    `No findings.` Only then update this task's status. Do not dispatch the feature-reviewer skill. Do
    not ask the user anything; you have
    no channel to them. If a material decision is unresolved, stop and return it as a blocking
    question with the options you considered. Clean up only the verified temporary baseline directory
    after review finishes. Return the task identifier, exact reviewed change target, changed paths,
-   validation commands and exit statuses, exact local task-review verdict, unresolved findings
-   count, status update, and any blocker. Keep the return under about 200 words:
+   validation mode, commands and exit statuses, full-suite deferral when applicable, exact local
+   task-review verdict, unresolved findings count, status update, and any blocker. Keep the return
+   under about 200 words:
    report these as short labeled values, not prose, and write any longer detail into the task
    package instead.
    ```
@@ -281,9 +304,10 @@ Repeat until every task in `tasks.md` is complete:
    as evidence for results that are not persisted on disk. Require confirmation that the final
    after-tree was captured after the last implementation or repair edit; do not accept a vague
    completion summary or a verdict against an earlier tree.
-11. Treat the task as complete only when its status is updated, required validation passed, and its
-   local `$task-reviewer` pass has no unresolved finding. Resume the worker or rerun the missing
-   check before advancing when any evidence is absent or ambiguous.
+11. Treat the task as complete only when its status is updated, the selected validation passed, any
+   deferred full suite is explicitly recorded, and its local `$task-reviewer` pass has no unresolved
+   finding. Resume the worker or rerun the missing check before advancing when any evidence is
+   absent or ambiguous.
 12. Append the task's entry to the run log before advancing. See "Keep a Durable Run Log".
 13. In a hosted session, commit and push this task now, including its `tasks.md` status update and
    the `ship-log.md` entry from step 12. See "Persist the Run in a Hosted Session". Do this after
@@ -328,6 +352,7 @@ Record per task:
 - Shaping model and reasoning effort, or `effort: unavailable`
 - Implementation model and reasoning effort, or `effort: unavailable`
 - Validation commands and exit statuses
+- Validation mode and whether the full suite was deferred
 - Local task-review verdict and unresolved findings count
 - Any approved user decision, with a pointer to the artifact that records it in full
 - Shaping start, end, and elapsed duration
@@ -440,12 +465,13 @@ If the reviewer returns `Feature readiness: Not ready`:
 4. Immediately before starting repairs, append a UTC repair-start timestamp for this cycle. Spawn a
    suitably capable repair worker with the raw finding, feature root, owning task package,
    and cited source locations. Tell it the `$ship-feature` parent owns feature review, so it must not
-   dispatch `$feature-reviewer`, and that it must return an unresolved decision as a blocking
-   question rather than asking the user.
+   dispatch `$feature-reviewer`, that its validation mode is `full`, and that it must return an
+   unresolved decision as a blocking question rather than asking the user.
 5. Use `$developer` and local `$task-reviewer` for a correction owned by one task. For a genuinely
    cross-task integration defect, make the smallest feature-scoped correction, review every
    affected task package locally, and avoid unrelated refactoring.
-6. Run affected tests and the canonical full validation after all repairs.
+6. Run affected tests and the canonical full validation after all repairs; the intermediate-task
+   exception cannot apply.
 7. Append a repair entry to the run log for this cycle: changes made, owning tasks, revalidation
    commands and results, plus the UTC repair end and elapsed duration. Keep the earlier review-cycle
    verdict entry unchanged.
