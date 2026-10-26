@@ -123,8 +123,6 @@ to increase coverage. Do not duplicate coverage already provided by another laye
 - Good E2E candidates include receiving and processing information, approvals that require external
   data, submitting changes to an external system, authentication and organization access, critical
   customer or production flows, and changes that cross implementation and system boundaries.
-  Good E2E candidates include receiving/processing orders, approving orders, submitting orders to
-  an ERP, authentication/organization access, and critical customer or product resolution flows.
   Do not automatically add E2E tests for every feature, bug fix, or minor UI change.
 - Do not automatically add a regression test for every bug. Add one when it protects a meaningful
   invariant, prevents silent data corruption or duplicate external actions, addresses a likely
