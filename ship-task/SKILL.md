@@ -41,7 +41,8 @@ If any required input is missing or malformed, stop and report what is missing.
 4. Use `$shape-spec` on that task folder to create or update the task-level `spec/` package.
 5. If `$shape-spec` surfaces unanswered questions, stop and ask them. Do not implement.
 6. If there are no questions, use `$developer` on the same task folder.
-7. Verify `$developer` completed its local `$task-reviewer` pass and task/status update. Do not
+7. Verify `$developer` completed its brief local `$task-reviewer` check with `Task review: Pass`
+   and updated task status. Documentation-only P3 advice does not block completion. Do not
    launch another thread, agent, or subagent for routine task review. If `$developer` did not update
    status, update only the current task using `$developer` completion rules. Read completion status
    before assuming the feature is still at its original path.
@@ -71,7 +72,9 @@ context.
 
 ## Validation
 
-- Rely on `$developer` for implementation validation, including its requirement to run the full test suite.
+- Rely on `$developer` for stage- and risk-appropriate `focused` or `full` validation from the
+  approved spec. Honor repository-required checks; focused task checks do not replace the
+  independent feature reviewer's canonical full validation.
 - Rely on `$developer` for task completion status and `$feature-reviewer` only for the independent
   feature-readiness verdict. This workflow owns feature completion and archival after Ready.
 - If validation fails, do not mark the task complete.

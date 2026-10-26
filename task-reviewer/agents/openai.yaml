@@ -1,4 +1,4 @@
 interface:
   display_name: "Task Reviewer"
-  short_description: "Run a local, spec-aware task review"
-  default_prompt: "Use $task-reviewer to review the current implementation locally against its full task package and exact diff."
+  short_description: "Check task correctness, scope, and local boundaries"
+  default_prompt: "Use $task-reviewer for a brief local check of the exact task diff and approved scope, reporting blocking issues separately from advisory documentation-only P3 findings."

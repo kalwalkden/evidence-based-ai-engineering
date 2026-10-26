@@ -102,11 +102,17 @@ long-running branch.
 No single check proves that software is correct. The validation performed should be proportional to
 the claim being made.
 
-Individual implementation uses the repository's canonical lint, type-check, and test commands and
-adds focused tests where they provide meaningful coverage. During whole-feature shipping,
-intermediate tasks may use focused validation when a later task remains; the final task and the
-independent feature review retain full project validation. Task review checks one implementation
-against its specification and exact change set. Feature review examines the cumulative result and
+Planning applies KISS and YAGNI to current requirements, records deployment stage, and resolves
+breaking-change intent before implementation. Pre-production work favors speed and targeted
+validation; production preserves deployed contracts unless explicitly changing them and uses
+broader checks for significant changes. Repository-required checks remain binding.
+
+Add tests only when they protect meaningful behavior at a justified maintenance cost. Prefer the
+cheapest useful layer, inspect existing coverage, and avoid implementation-detail or redundant
+tests. New code and bug fixes do not automatically require new tests. Task implementation uses
+`focused` or `full` validation based on recorded stage and risk; the independent feature review
+retains canonical full project validation on the assembled feature. Task review checks one
+implementation against its specification and exact change set. Feature review examines the cumulative result and
 its interactions before the feature is declared ready.
 
 Missing or failed checks remain visible. They are not translated into success because a command was
@@ -119,8 +125,9 @@ own work ready provides useful checking, but limited independence.
 
 The toolkit therefore uses two review levels with different costs and purposes:
 
-- Task review is a fast, spec-aware quality pass inside the implementation loop. It catches local
-  defects while context is fresh and repair is cheap.
+- Task review is a brief local check of correctness, scope, and directly affected boundaries in
+  the implementation context. It reuses validation evidence and skips routine structural-analysis
+  setup. Documentation-only P3 advice does not block completion or force another repair pass.
 - Feature review is a separate adversarial readiness gate over the assembled change. It runs in a
   fresh context and, when practical, on a different capable model so it is less likely to inherit
   the implementation's blind spots.

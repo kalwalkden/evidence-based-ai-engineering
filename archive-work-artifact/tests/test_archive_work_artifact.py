@@ -126,6 +126,46 @@ class ArchiveWorkArtifactTests(unittest.TestCase):
         self.assertEqual("error", payload["status"])
         self.assertIn("already under ai/archive", payload["message"])
 
+    def test_git_archive_preserves_content_and_index_for_tracked_and_untracked_artifacts(
+        self,
+    ) -> None:
+        subprocess.run(
+            ["git", "init", "--quiet"], cwd=self.repo_root, check=True, capture_output=True
+        )
+        unrelated = self.repo_root / "unrelated.txt"
+        unrelated.write_text("Staged user work\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "add", str(unrelated)], cwd=self.repo_root, check=True, capture_output=True
+        )
+
+        for tracked in (False, True):
+            with self.subTest(tracked=tracked):
+                spec_root = (
+                    self.repo_root / "ai" / "specs" / ("tracked" if tracked else "untracked")
+                )
+                spec_root.mkdir(parents=True)
+                plan = spec_root / "plan.md"
+                plan.write_text("# Completed Plan\n", encoding="utf-8")
+                if tracked:
+                    subprocess.run(
+                        ["git", "add", str(plan)],
+                        cwd=self.repo_root,
+                        check=True,
+                        capture_output=True,
+                    )
+                (spec_root / "notes.md").write_text("Untracked notes\n", encoding="utf-8")
+                index_before = (self.repo_root / ".git" / "index").read_bytes()
+
+                result, payload = self.run_archive(spec_root)
+
+                target = self.repo_root / "ai" / "archive" / "specs" / spec_root.name
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertEqual("moved", payload["status"])
+                self.assertFalse(spec_root.exists())
+                self.assertEqual("# Completed Plan\n", (target / "plan.md").read_text())
+                self.assertEqual("Untracked notes\n", (target / "notes.md").read_text())
+                self.assertEqual(index_before, (self.repo_root / ".git" / "index").read_bytes())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -62,8 +62,8 @@ public API unchanged.
 ```
 
 The architect writes `ai/features/<feature-slug>/feature.md` and `tasks.md`, then stops before task
-briefs are final. Read the proposed scope, non-goals, tradeoffs, and task order. Answer any open
-questions. When it matches your intent, say:
+briefs are final. Read the proposed scope, deployment stage, compatibility/testing decisions,
+non-goals, tradeoffs, and task order. Answer any open questions. When it matches your intent, say:
 
 ```text
 I approve the feature plan. Create the task briefs.
@@ -75,8 +75,11 @@ I approve the feature plan. Create the task briefs.
 Ship the next task for ai/features/<feature-slug>.
 ```
 
-That shapes, implements, tests, and reviews one bounded task, then stops. To run every remaining
-task, the independent feature review, and archival in one workflow, use:
+That shapes, implements, validates, and reviews one bounded task, then stops. Planning follows
+KISS/YAGNI and records deployment stage: pre-production favors targeted checks; significant
+production changes use broader validation and preserve deployed contracts unless explicitly
+changing them. Add tests only when they protect meaningful behavior; the independent feature gate
+still runs canonical full validation. To run every remaining task, the independent feature review, and archival in one workflow, use:
 
 ```text
 Ship the feature at ai/features/<feature-slug>.
@@ -159,7 +162,7 @@ Run the three skills yourself, stopping between each:
 | --- | --- |
 | `shape-spec` | Expands a brief into a task-level `spec/` package grounded in current repo evidence |
 | `developer` | Implements one task, adds high-ROI tests, validates before reporting |
-| `task-reviewer` | Spec-aware, read-only review of the resolved diff before merge |
+| `task-reviewer` | Brief local scope/correctness check; documentation-only P3 advice is non-blocking |
 
 **OR** hand the whole task to one skill:
 

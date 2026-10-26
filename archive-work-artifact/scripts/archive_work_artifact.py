@@ -228,13 +228,6 @@ def move_artifact(source: Path, target: Path, repo_root: Path, dry_run: bool) ->
         return "dry_run"
 
     target.parent.mkdir(parents=True, exist_ok=True)
-    git_check = run(["git", "rev-parse", "--is-inside-work-tree"], repo_root)
-    if git_check.returncode == 0:
-        result = run(["git", "mv", str(source), str(target)], repo_root)
-        if result.returncode != 0:
-            raise ArchiveError(result.stderr.strip() or result.stdout.strip() or "git mv failed")
-        return "git mv"
-
     shutil.move(str(source), str(target))
     return "mv"
 
