@@ -131,7 +131,8 @@ The toolkit therefore uses two review levels with different costs and purposes:
 
 - Task review is a brief local check of correctness, scope, and directly affected boundaries in
   the implementation context. It reuses validation evidence and skips routine structural-analysis
-  setup. Documentation-only P3 advice does not block completion or force another repair pass.
+  setup. Targeted Reveal checks are optional when they help resolve a concrete concern.
+  Documentation-only P3 advice does not block completion or force another repair pass.
 - Feature review is a separate adversarial readiness gate over the assembled change. It runs in a
   fresh context and, when practical, on a different capable model so it is less likely to inherit
   the implementation's blind spots.

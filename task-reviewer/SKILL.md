@@ -70,6 +70,20 @@ For a base-branch review, inspect what would actually merge:
 
 Do not rely on a diff summary or compare directly with a moving branch tip.
 
+## Enrich with Reveal When Available
+
+Use Reveal optionally when a concrete review concern would benefit from structural evidence, such
+as an unclear dependency, changed symbol, or affected call boundary. Availability alone is not a
+reason to run it; skip routine discovery and blanket analysis on every task.
+
+- When useful, locate the `reveal` executable and inspect its installed version and help as needed.
+  Use only commands and options advertised by that binary.
+- Target the relevant supported files or symbols and stop when the concern is resolved. Keep the
+  exact task diff as the review boundary.
+- Treat output as investigation leads; verify findings against source, call sites, tests, or
+  behavior. If Reveal is absent, unsupported, or fails, continue with normal repository tools.
+  Do not install it or block task review because it is unavailable.
+
 ## Run the Review Pass
 
 Perform the defect-first review in the current context by default. This is the routine, low-overhead
@@ -84,8 +98,9 @@ review.
 Keep the pass brief and read-only. Compare the exact diff with approved scope, acceptance criteria,
 and directly affected contracts; check for concrete local correctness defects and scope drift.
 Reuse still-valid validation evidence. Run another check only when a specific gap or suspected
-failure warrants it. Do not run routine Reveal discovery, a structural-analysis pass, a repository
-survey, or a cumulative feature review. Reserve cross-task integration and assembled-feature
+failure warrants it. Use targeted Reveal checks only as described above; skip routine tool discovery
+and blanket structural analysis. Do not run a repository survey or cumulative feature review.
+Reserve cross-task integration and assembled-feature
 readiness for `$feature-reviewer`; still flag a concrete boundary defect visible in this task.
 Do not rely solely on implementation memory or the author's summary.
 
