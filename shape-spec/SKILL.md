@@ -53,7 +53,7 @@ For standalone tasks (not inside a feature), ask the user for visual design when
 
 1. Read approved task brief or equivalent scoped task input first.
 2. Clarify only unresolved details needed to shape task safely. Inherit the recorded deployment
-   stage, affected deployed contracts, compatibility decisions, and testing direction from the
+   stage, affected deployed contracts, compatibility decisions, and critical risks from the
    feature. For standalone tasks or missing decisions, reuse explicit repository/user guidance or
    ask whether the work is under development / pre-production or deployed / production. Do not
    infer stage from a new branch or unfinished feature. If pre-production changes may break APIs,
@@ -93,38 +93,13 @@ For standalone tasks (not inside a feature), ask the user for visual design when
 - When environment supports dedicated planning mode, use it. Otherwise run as normal planning conversation.
 - Use repository-relative paths rooted at repo top level throughout spec package unless calling environment explicitly requires absolute paths.
 
-## Testing Strategy
+## Task Validation Needs
 
-Prefer the cheapest test that gives meaningful confidence. Inspect source and existing coverage to
-understand behavior; do not create tests as a discovery exercise, merely because code changed, or
-to increase coverage. Do not duplicate coverage already provided by another layer.
-
-- **Under development / pre-production:** optimize for development speed. Add tests only for
-  meaningful business logic, complex behavior, data integrity, or behavior realistically easy to
-  break. Prefer targeted validation over running or expanding the full suite.
-- **Deployed / production:** preserve compatibility unless explicitly changing it. Add regression
-  coverage for meaningful production bugs, favor stronger integration coverage, and maintain E2E
-  coverage for critical workflows. Run broader suites for significant changes. Treat migrations,
-  APIs, integrations, existing behavior, and external side effects conservatively.
-- Use unit tests for non-trivial business/domain logic; integration tests for important boundaries
-  such as ERP integrations, database behavior, email processing, parsing, authentication, and
-  external APIs; and E2E tests selectively for critical user workflows.
-- Good E2E candidates include receiving/processing orders, approving orders, submitting orders to
-  an ERP, authentication/organization access, and critical customer or product resolution flows.
-  Do not automatically add E2E tests for every feature, bug fix, or minor UI change.
-- Do not automatically add a regression test for every bug. Add one when it protects a meaningful
-  invariant, prevents silent data corruption or duplicate external actions, addresses a likely
-  recurrence or hard-to-notice failure, or covers business-critical behavior.
-- Avoid tests for Tailwind/CSS classes, exact markup unless behavior depends on it, trivial
-  rendering, simple getters/setters, framework behavior, straightforward CRUD wiring, components
-  with no meaningful logic, and snapshots unless explicitly useful. Production does not justify
-  testing implementation details.
-
-Before adding a test, ask internally: what meaningful behavior does it protect; could it realistically
-regress; is it already covered; would it constrain harmless refactoring; and is its maintenance cost
-justified at this product stage? If the justification is unclear, do not add it. Record a concise
-rationale for selected coverage, including when no new tests are warranted. Repository-required
-checks remain binding; never ignore a known failure.
+Identify the task's meaningful behaviors, affected boundaries, existing coverage, and material gaps.
+Record relevant checks and exact commands from repository evidence, along with explicit user or
+repository requirements. Keep this specific to the task; do not repeat a generic testing policy in
+the spec. `$developer` owns the detailed testing policy and final selection of tests and checks,
+using these needs and the actual implementation surface.
 
 ## File Guidance
 
@@ -141,10 +116,10 @@ Capture:
 - Expected data or control flow, affected contracts/state, and invariants to preserve
 - Task-local sequencing or phases when they make the implementation safer or easier to review
 - Deployment stage, affected deployed contracts, and approved breaking-change approach
-- Test strategy with concise risk/coverage rationale, including when no new tests are warranted
-- Exact validation approach: `focused` or `full`, why it fits the stage and change, checks required
-  now, and any broader validation deferred to independent feature review. Significant production
-  changes and feature-review repairs use `full`; repository-required checks always apply
+- Task-specific validation needs, existing coverage, material gaps, and relevant exact commands
+- Required checks, any caller-selected validation mode (`focused` or `full`), and broader checks
+  deferred to independent feature review. Leave detailed test selection to `$developer` while
+  preserving explicit user and repository requirements
 - Any current-tree deviation from the task brief's likely starting points or change surface
 - Open questions or risky edges implementer should resolve carefully
 

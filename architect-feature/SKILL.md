@@ -43,39 +43,6 @@ Move feature or fix from ambiguity to simple, correct feature plan, establish an
 - Use repository-relative paths rooted at repo top level in plans, task lists, references unless calling environment explicitly requires absolute paths.
 - No red commits by design: never decompose work in a way that leaves any task or commit with a broken test suite. Split only along green-keeping boundaries, or land it atomically.
 
-## Testing Strategy
-
-Prefer the cheapest test that gives meaningful confidence. Inspect source and existing coverage to
-understand behavior; do not create tests as a discovery exercise, merely because code changed, or
-to increase coverage. Do not duplicate coverage already provided by another layer.
-
-- **Under development / pre-production:** optimize for development speed. Add tests only for
-  meaningful business logic, complex behavior, data integrity, or behavior realistically easy to
-  break. Prefer targeted validation over running or expanding the full suite.
-- **Deployed / production:** preserve compatibility unless explicitly changing it. Add regression
-  coverage for meaningful production bugs, favor stronger integration coverage, and maintain E2E
-  coverage for critical workflows. Run broader suites for significant changes. Treat migrations,
-  APIs, integrations, existing behavior, and external side effects conservatively.
-- Use unit tests for non-trivial business/domain logic; integration tests for important boundaries
-  such as ERP integrations, database behavior, email processing, parsing, authentication, and
-  external APIs; and E2E tests selectively for critical user workflows.
-- Good E2E candidates include receiving/processing orders, approving orders, submitting orders to
-  an ERP, authentication/organization access, and critical customer or product resolution flows.
-  Do not automatically add E2E tests for every feature, bug fix, or minor UI change.
-- Do not automatically add a regression test for every bug. Add one when it protects a meaningful
-  invariant, prevents silent data corruption or duplicate external actions, addresses a likely
-  recurrence or hard-to-notice failure, or covers business-critical behavior.
-- Avoid tests for Tailwind/CSS classes, exact markup unless behavior depends on it, trivial
-  rendering, simple getters/setters, framework behavior, straightforward CRUD wiring, components
-  with no meaningful logic, and snapshots unless explicitly useful. Production does not justify
-  testing implementation details.
-
-Before adding a test, ask internally: what meaningful behavior does it protect; could it realistically
-regress; is it already covered; would it constrain harmless refactoring; and is its maintenance cost
-justified at this product stage? If the justification is unclear, do not add it. Record a concise
-rationale for selected coverage, including when no new tests are warranted. Repository-required
-checks remain binding; never ignore a known failure.
-
 ## Repo Orientation
 
 - If repo has no `ARCHITECTURE.md`, use `$discover-architecture` first to get oriented and produce one if needed before planning.
@@ -89,8 +56,9 @@ checks remain binding; never ignore a known failure.
 - Clarify requirements and constraints.
 - Establish whether the affected project or feature is under development / pre-production or
   deployed / production. Reuse an explicit recorded answer; otherwise ask. Record the stage,
-  affected deployed contracts, compatibility decisions, and testing direction in `feature.md`.
-  A new feature in development does not make deployed APIs or consumers disposable.
+  affected deployed contracts, compatibility decisions, and critical risks in `feature.md`.
+  A new feature in development does not make deployed APIs or consumers disposable. Leave
+  detailed testing policy and test selection to `$developer`.
 - When pre-production work may break APIs, integrations, or existing behavior, ask which approach
   is intended: accept the break, update consumers together, or preserve compatibility. Record the
   approved choice before task briefs depend on it. For production, preserve compatibility unless
@@ -176,8 +144,8 @@ Create or update `tasks.md` in the feature directory.
 
 This file is human-reviewable task list for whole feature.
 
-- Keep tasks in implementation order. Carry stage, compatibility decisions, and relevant testing
-  constraints into task briefs without repeating the full feature policy.
+- Keep tasks in implementation order. Carry stage, compatibility decisions, and critical risks
+  into task briefs.
 - Use concise titles + short notes.
 - Make scan easy in one pass.
 

@@ -107,6 +107,10 @@ breaking-change intent before implementation. Pre-production work favors speed a
 validation; production preserves deployed contracts unless explicitly changing them and uses
 broader checks for significant changes. Repository-required checks remain binding.
 
+The architect captures deployment stage, compatibility expectations, and critical risks. Shaping
+identifies task-specific validation needs and existing coverage. The developer owns detailed testing
+policy and selects the tests and checks for the actual implementation.
+
 Add tests only when they protect meaningful behavior at a justified maintenance cost. Prefer the
 cheapest useful layer, inspect existing coverage, and avoid implementation-detail or redundant
 tests. New code and bug fixes do not automatically require new tests. Task implementation uses

@@ -166,7 +166,7 @@ the model-routing and the independent-review contract.
 
 ## Select Validation Per Task
 
-Read the recorded deployment stage, compatibility decisions, testing direction, and current task
+Read the recorded deployment stage, compatibility decisions, critical risks, and current task
 scope before shaping. If missing or conflicting, resolve the decision through this parent and
 record it in the feature artifact. Do not infer stage from task numbers or remaining task count.
 

@@ -102,6 +102,10 @@ If expected spec file missing, note it explicitly and stop unless user wants to 
 
 ## Testing Strategy
 
+Own the detailed testing policy and final selection of tests and checks. Use the spec's validation
+needs and evidence of existing coverage, then decide based on the actual implementation surface.
+Preserve explicit user and repository requirements.
+
 Prefer the cheapest test that gives meaningful confidence. Inspect source and existing coverage to
 understand behavior; do not create tests as a discovery exercise, merely because code changed, or
 to increase coverage. Do not duplicate coverage already provided by another layer.
@@ -137,10 +141,11 @@ checks remain binding; never ignore a known failure.
 
 Before reporting completion:
 
-- Read the spec's deployment stage, compatibility decisions, test rationale, and exact validation
-  commands. If stage is missing, reuse explicit repository/user guidance or ask. If an API,
-  integration, or behavior break is newly discovered, resolve the intended approach with the user
-  before implementing it. A pre-production feature can still affect deployed contracts.
+- Read the spec's deployment stage, compatibility decisions, validation needs, existing coverage,
+  and available check commands. Apply the testing strategy above to select tests and validation.
+  If stage is missing, reuse explicit repository/user guidance or ask. If an API, integration, or
+  behavior break is newly discovered, resolve the intended approach with the user before
+  implementing it. A pre-production feature can still affect deployed contracts.
 - Discover focused checks, canonical checks, the full test suite, and full-validation commands.
 - Use `focused` for pre-production work when targeted checks give meaningful confidence, including
   standalone and final implementation tasks. Run affected tests and applicable lint/type checks;
