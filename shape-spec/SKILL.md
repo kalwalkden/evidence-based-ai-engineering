@@ -52,7 +52,14 @@ For standalone tasks (not inside a feature), ask the user for visual design when
 ## Workflow
 
 1. Read approved task brief or equivalent scoped task input first.
-2. Clarify only unresolved details needed to shape task safely.
+2. Clarify only unresolved details needed to shape task safely. Inherit the recorded deployment
+   stage, affected deployed contracts, compatibility decisions, and critical risks from the
+   feature. For standalone tasks or missing decisions, reuse explicit repository/user guidance or
+   ask whether the work is under development / pre-production or deployed / production. Do not
+   infer stage from a new branch or unfinished feature. If pre-production changes may break APIs,
+   integrations, or existing behavior, ask whether to accept the break, update consumers together,
+   or preserve compatibility. Production preserves compatibility unless explicitly changing it.
+   Resolve and record these decisions before implementation depends on them.
 3. Determine visual design source:
    - For feature tasks, read feature-level visual design from `feature.md` and `visuals/` when present. Do not ask for new task-local visual design unless the task exposes a genuine gap in the approved feature design.
    - For standalone tasks, ask the user for visual design when the work is visual or interactive. If the task is non-visual, note that no visual design is needed.
@@ -79,9 +86,20 @@ For standalone tasks (not inside a feature), ask the user for visual design when
   useful orientation, not proof that a path, symbol, or proposed boundary is still correct.
 - Record every approved user decision in `plan.md` or the applicable feature artifact before handing
   the task to implementation. Never rely on conversation history as the only record.
+- Apply KISS and YAGNI: design the smallest correct implementation for current requirements.
+  Avoid speculative abstractions, future-proofing, compatibility layers, or hypothetical consumers.
+  Add compatibility work only for approved requirements or real deployed boundaries.
 - Keep questions focused. Ask only what changes scope or plan quality.
 - When environment supports dedicated planning mode, use it. Otherwise run as normal planning conversation.
 - Use repository-relative paths rooted at repo top level throughout spec package unless calling environment explicitly requires absolute paths.
+
+## Task Validation Needs
+
+Identify the task's meaningful behaviors, affected boundaries, existing coverage, and material gaps.
+Record relevant checks and exact commands from repository evidence, along with explicit user or
+repository requirements. Keep this specific to the task; do not repeat a generic testing policy in
+the spec. `$developer` owns the detailed testing policy and final selection of tests and checks,
+using these needs and the actual implementation surface.
 
 ## File Guidance
 
@@ -97,7 +115,11 @@ Capture:
 - Detailed implementation approach for this one task, including current file and symbol targets
 - Expected data or control flow, affected contracts/state, and invariants to preserve
 - Task-local sequencing or phases when they make the implementation safer or easier to review
-- Test strategy and exact validation approach
+- Deployment stage, affected deployed contracts, and approved breaking-change approach
+- Task-specific validation needs, existing coverage, material gaps, and relevant exact commands
+- Required checks, any caller-selected validation mode (`focused` or `full`), and broader checks
+  deferred to independent feature review. Leave detailed test selection to `$developer` while
+  preserving explicit user and repository requirements
 - Any current-tree deviation from the task brief's likely starting points or change surface
 - Open questions or risky edges implementer should resolve carefully
 

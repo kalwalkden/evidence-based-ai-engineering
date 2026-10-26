@@ -166,17 +166,22 @@ the model-routing and the independent-review contract.
 
 ## Select Validation Per Task
 
-Use `full` validation for the last remaining incomplete task and for every task unless this section
-explicitly selects `ship-feature-intermediate`. Read `tasks.md` from disk immediately before shaping
-and again immediately before implementation. The selected task is intermediate only when another
-task will remain incomplete after it; task numbers, remembered status, and feature-folder membership
-are not evidence. A one-task feature and the final task of a resumed run always use `full`.
+Read the recorded deployment stage, compatibility decisions, critical risks, and current task
+scope before shaping. If missing or conflicting, resolve the decision through this parent and
+record it in the feature artifact. Do not infer stage from task numbers or remaining task count.
 
-For an intermediate task, `ship-feature-intermediate` requires task tests, affected integration or
-regression checks, and applicable lint or type checks. It does not allow a known failure or stricter
-repository requirement to be ignored. The full test suite remains mandatory for the final task and
-for the independent `$feature-reviewer`. If focused checks cannot give useful confidence, select
-`full` instead. Feature-review repairs always use `full`, including repairs owned by an early task.
+Use `focused` for pre-production tasks when targeted checks give meaningful confidence, including
+the final implementation task. Select the cheapest useful tests and applicable lint/type checks;
+do not require new tests merely because code changed. For small production changes, focused checks
+may also suffice with a recorded risk rationale.
+
+Use `full` for significant production changes, when focused checks cannot validate the affected
+boundaries, and for all feature-review repairs. Honor stricter repository requirements and never
+ignore a known failure. Shaping must record concrete required checks and any deferred commands.
+Recheck the mode against the shaped spec and actual change before implementation.
+
+The independent `$feature-reviewer` always runs canonical full validation on the assembled feature
+in its fresh context. Focused task checks do not replace that gate.
 
 ## Ship Every Task Sequentially
 
@@ -230,8 +235,8 @@ Repeat until every task in `tasks.md` is complete:
    current file and symbol targets, the relevant call path, contracts and
    invariants, patterns, tests, expected unchanged boundaries, exact validation commands, and
    uncertainties. The parent selected `<validation-mode>` for this task. In `spec/plan.md` and
-   `spec/references.md`, distinguish checks required now from full commands deferred to the final
-   task and independent review when the mode is `ship-feature-intermediate`; retain both command
+   `spec/references.md`, distinguish checks required now from full commands deferred to
+   independent feature review when the mode is `focused`; retain both command
    sets concretely. Do not modify production code, tests, task status, or feature status. Do not ask
    the user anything; you have no channel to them. If a material decision is unresolved, stop and
    return it as a blocking question with the options you considered. Return the task identifier,
@@ -272,22 +277,25 @@ Repeat until every task in `tasks.md` is complete:
    pre-implementation baseline bundle unchanged, or capture one the same way before editing. The
    bundle contains <baseline-sha>, <baseline-root>, <baseline-marker>, <temporary-git-directory>,
    <empty-git-config>, <real-git-directory>, <working-tree>, and <captured-head-tree>. Implement
-   exactly this task. The parent selected `<validation-mode>` after reading `tasks.md`; verify that
-   mode against the current on-disk task status before editing. Apply the developer skill's
-   validation policy: only a verified `ship-feature-intermediate` task may defer the full suite;
-   `full` requires it. Run the required validation, then capture the current tree
+   exactly this task. The parent selected `<validation-mode>` from the recorded stage, risk, and
+   task scope; verify that mode against the spec and actual change before editing. Apply the developer skill's
+   validation policy: `focused` runs the justified affected checks; `full` requires the full suite
+   and applicable canonical checks. Honor stricter repository requirements. Run the required
+   validation, then capture the current tree
    in that temporary Git directory and invoke the task-reviewer skill locally with the delta from the
    original before-tree, so the verdict covers only this task's staged, unstaged, new, and deleted
-   files. If review returns an in-scope finding, repair it, rerun validation required by the
-   selected mode, capture a new after-tree through a fresh after-index path, and rerun task-reviewer from the
-   original before-tree to the latest after-tree. Repeat until that exact latest target receives
-   `No findings.` Only then update this task's status. Do not dispatch the feature-reviewer skill. Do
+   files. Keep this a brief local correctness/scope check, not cumulative feature review. If review
+   returns an in-scope blocking finding, repair it, rerun affected required validation, capture a
+   new after-tree through a fresh after-index path, and recheck the correction from the original
+   before-tree to the latest after-tree. Repeat until that exact latest target receives
+   `Task review: Pass` with zero unresolved blocking findings. Documentation-only P3 advice does
+   not require repair or another pass; record it separately. Only then update this task's status. Do not dispatch the feature-reviewer skill. Do
    not ask the user anything; you have
    no channel to them. If a material decision is unresolved, stop and return it as a blocking
    question with the options you considered. Clean up only the verified temporary baseline directory
    after review finishes. Return the task identifier, exact reviewed change target, changed paths,
    validation mode, commands and exit statuses, full-suite deferral when applicable, exact local
-   task-review verdict, unresolved findings count, status update, and any blocker. Keep the return
+   task-review verdict, separate unresolved blocking/advisory counts, status update, and any blocker. Keep the return
    under about 200 words:
    report these as short labeled values, not prose, and write any longer detail into the task
    package instead.
@@ -305,13 +313,14 @@ Repeat until every task in `tasks.md` is complete:
    after-tree was captured after the last implementation or repair edit; do not accept a vague
    completion summary or a verdict against an earlier tree.
 11. Treat the task as complete only when its status is updated, the selected validation passed, any
-   deferred full suite is explicitly recorded, and its local `$task-reviewer` pass has no unresolved
-   finding. Resume the worker or rerun the missing check before advancing when any evidence is
+   deferred full suite is explicitly recorded, and its local `$task-reviewer` verdict is
+   `Task review: Pass` with no unresolved blocking finding. Advisory documentation-only P3 findings
+   do not prevent completion. Resume the worker or rerun the missing check before advancing when any evidence is
    absent or ambiguous.
 12. Append the task's entry to the run log before advancing. See "Keep a Durable Run Log".
 13. In a hosted session, commit and push this task now, including its `tasks.md` status update and
    the `ship-log.md` entry from step 12. See "Persist the Run in a Hosted Session". Do this after
-   both of those are written, never before the task's local review is clean, and never while a
+   both of those are written, never before the task's local review passes, and never while a
    baseline bundle for it is still open.
 14. If either worker stopped on a fixable in-scope failure, steer it or spawn a replacement worker with
    the failure evidence and continue. Do not skip ahead.
@@ -353,7 +362,7 @@ Record per task:
 - Implementation model and reasoning effort, or `effort: unavailable`
 - Validation commands and exit statuses
 - Validation mode and whether the full suite was deferred
-- Local task-review verdict and unresolved findings count
+- Local task-review verdict and separate unresolved blocking/advisory counts
 - Any approved user decision, with a pointer to the artifact that records it in full
 - Shaping start, end, and elapsed duration
 - Implementation-and-local-review start, end, and elapsed duration
@@ -470,8 +479,8 @@ If the reviewer returns `Feature readiness: Not ready`:
 5. Use `$developer` and local `$task-reviewer` for a correction owned by one task. For a genuinely
    cross-task integration defect, make the smallest feature-scoped correction, review every
    affected task package locally, and avoid unrelated refactoring.
-6. Run affected tests and the canonical full validation after all repairs; the intermediate-task
-   exception cannot apply.
+6. Run affected tests and the canonical full validation after all repairs; focused task
+   validation cannot replace these repair checks.
 7. Append a repair entry to the run log for this cycle: changes made, owning tasks, revalidation
    commands and results, plus the UTC repair end and elapsed duration. Keep the earlier review-cycle
    verdict entry unchanged.
@@ -550,7 +559,7 @@ the same disk and die with it. Only a push puts the work somewhere that survives
 So in a hosted session, commit **and push** to the session's own working branch at each of these
 points, rather than once at the end:
 
-- After each task is complete — status updated, validation passed, local task review clean, and
+- After each task is complete — status updated, validation passed, local task review passed, and
   its `ship-log.md` entry appended. This is step 13 of "Ship Every Task Sequentially".
 - After each repair pass that answers a feature-review finding, once its validation is green.
 - After completion status and archival or epic handoff are verified, as the run's final commit.

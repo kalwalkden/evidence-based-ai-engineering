@@ -80,7 +80,8 @@ If expected spec file missing, note it explicitly and stop unless user wants to 
 - If repo unfamiliar, use `$discover-architecture` skill first or inspect repo directly.
 - Make smallest code/refactor/dependency/tooling changes needed to complete task cleanly.
 - When referencing files in notes, plans, reports, use repository-relative paths rooted at repo top level unless calling environment explicitly requires absolute paths.
-- Apply the validation policy below before committing or reporting done. Default to the full suite; only a verified `$ship-feature` intermediate-task dispatch may defer it.
+- Apply the recorded stage-sensitive testing and validation strategy before committing or
+  reporting done. Resolve missing stage or breaking-change decisions instead of inventing them.
 
 ## Ambiguity Handling
 
@@ -99,26 +100,71 @@ If expected spec file missing, note it explicitly and stop unless user wants to 
 - Update docs/comments only when they materially improve correctness or maintainability.
 - Call out any large refactor or tooling change needed to complete task.
 
-## Testing Policy
+## Testing Strategy
 
-- Add or update tests when they materially increase confidence.
-- Prefer tests covering meaningful boundaries, regressions, risky behavior.
-- Avoid low-value tests that restate obvious implementation details.
-- Match existing test style unless strong reason not to.
+Own the detailed testing policy and final selection of tests and checks. Use the spec's validation
+needs and evidence of existing coverage, then decide based on the actual implementation surface.
+Preserve explicit user and repository requirements.
+
+Prefer the cheapest test that gives meaningful confidence. Inspect source and existing coverage to
+understand behavior; do not create tests as a discovery exercise, merely because code changed, or
+to increase coverage. Do not duplicate coverage already provided by another layer.
+
+- **Under development / pre-production:** optimize for development speed. Add tests only for
+  meaningful business logic, complex behavior, data integrity, or behavior realistically easy to
+  break. Prefer targeted validation over running or expanding the full suite.
+- **Deployed / production:** preserve compatibility unless explicitly changing it. Add regression
+  coverage for meaningful production bugs, favor stronger integration coverage, and maintain E2E
+  coverage for critical workflows. Run broader suites for significant changes. Treat migrations,
+  APIs, integrations, existing behavior, and external side effects conservatively.
+- Use unit tests for non-trivial business/domain logic; integration tests for important boundaries
+  such as ERP integrations, database behavior, email processing, parsing, authentication, and
+  external APIs; and E2E tests selectively for critical user workflows.
+- Good E2E candidates include receiving and processing information, approvals that require external
+  data, submitting changes to an external system, authentication and organization access, critical
+  customer or production flows, and changes that cross implementation and system boundaries.
+  Do not automatically add E2E tests for every feature, bug fix, or minor UI change.
+- Do not automatically add a regression test for every bug. Add one when it protects a meaningful
+  invariant, prevents silent data corruption or duplicate external actions, addresses a likely
+  recurrence or hard-to-notice failure, or covers business-critical behavior.
+- Avoid tests for Tailwind/CSS classes, exact markup unless behavior depends on it, trivial
+  rendering, simple getters/setters, framework behavior, straightforward CRUD wiring, components
+  with no meaningful logic, and snapshots unless explicitly useful. Production does not justify
+  testing implementation details.
+
+Before adding a test, ask internally: what meaningful behavior does it protect; could it realistically
+regress; is it already covered; would it constrain harmless refactoring; and is its maintenance cost
+justified at this product stage? If the justification is unclear, do not add it. Record a concise
+rationale for selected coverage, including when no new tests are warranted. Repository-required
+checks remain binding; never ignore a known failure.
 
 ## Validation
 
 Before reporting completion:
 
-- Discover the repository's focused checks, canonical checks, full test-suite command, and full-validation command.
-- Use `full` validation by default. It requires the full test suite and applicable canonical project-wide checks. If the repository has no full test-suite command, say so and run the closest available project-wide validation.
-- Use `ship-feature-intermediate` validation only when the caller explicitly identifies itself as the `$ship-feature` parent, supplies the exact feature and task paths, and the on-disk `tasks.md` confirms that another task will remain incomplete after this task. Missing, ambiguous, stale, or ineligible context means `full`.
-- In `ship-feature-intermediate` mode, run meaningful task tests, affected integration or regression checks, and applicable lint or type checks selected from the spec and actual change surface. If no useful focused set exists, run `full`. Focused validation never permits ignoring a known failure or a stricter repository requirement.
-- A repair that responds to an independent feature-review finding always uses `full`, regardless of the owning task. An intermediate task's local task-review repair retains its verified mode; the task that completes the feature always uses `full`.
-- Review every new and modified code comment for references to tasks, tickets, feature requests, specs, prompts, implementation phases, or temporary planning artifacts. Remove those process references or rewrite them around the relevant code location, technical/business concept, or durable `/docs` document before reporting completion.
-- Fix issues and rerun the checks required by the selected mode until they pass.
-- In `full` mode, run the full test suite at the end of the task before committing or reporting completion. Never substitute a subset. In `ship-feature-intermediate` mode, record that the full suite was deferred to the final task and independent review.
-- Do not claim validation you did not perform.
+- Read the spec's deployment stage, compatibility decisions, validation needs, existing coverage,
+  and available check commands. Apply the testing strategy above to select tests and validation.
+  If stage is missing, reuse explicit repository/user guidance or ask. If an API, integration, or
+  behavior break is newly discovered, resolve the intended approach with the user before
+  implementing it. A pre-production feature can still affect deployed contracts.
+- Discover focused checks, canonical checks, the full test suite, and full-validation commands.
+- Use `focused` for pre-production work when targeted checks give meaningful confidence, including
+  standalone and final implementation tasks. Run affected tests and applicable lint/type checks;
+  a task may need no new tests. State what ran and what remains unchecked.
+- Use `full` for significant production changes, changes whose affected boundaries cannot be
+  validated usefully with focused checks, and repairs from independent feature-review findings.
+  `full` requires the full suite and applicable canonical project-wide checks. If no full-suite
+  command exists, say so and run the closest available project-wide validation.
+- For small production changes, focused checks may suffice when justified by the recorded risk and
+  affected boundaries. Preserve meaningful regression, integration, and critical-flow coverage.
+- Honor stricter repository requirements in either mode. Known failures must be resolved or
+  reported as blockers. Do not silently downgrade a required check.
+- Independent feature review still runs canonical full validation on the assembled feature in its
+  own fresh context. Focused task checks do not replace that gate.
+- Review new/modified code comments for task, ticket, prompt, implementation-phase, or temporary
+  artifact references. Rewrite process references around durable technical/business context.
+- Fix issues and rerun affected required checks after corrections. Reuse still-valid evidence;
+  rerun broader checks when the changes or failures justify it. Do not claim checks not performed.
 
 ## Review Loop
 
@@ -195,17 +241,20 @@ Before reporting completion:
 - If the repository is not a git worktree, say so and fall back to recording the changed-path set
   directly. Do not silently review an unbounded target.
 - Always include a review loop after implementation. Invoke `$task-reviewer` in the current context
-  when available; do not create a fresh thread, agent, or subagent solely for routine task review.
+  when available for a brief check of scope, correctness, and directly affected boundaries. Do not
+  repeat cumulative feature review or spawn another context solely for routine task review.
 - Preserve the original `TASK_BEFORE_TREE` for every review pass. After implementation and after each
   repair, run the validation required by the selected mode, capture the latest worktree in
   a fresh after-index path, and give `$task-reviewer` the delta from the original before-tree to that
   latest after-tree. Do not let earlier uncommitted task or user changes become part of the verdict.
-- If review returns an in-scope finding, repair it, rerun validation, capture a new after-tree with a
-  new after-index path, and rerun `$task-reviewer` against the original before-tree. Repeat until the
-  exact latest tree-to-tree target receives `No findings.` Never treat a finding as resolved solely
-  because code changed after the reviewer reported it.
-- Keep the baseline bundle until the final no-findings verdict or a reported blocker. Clean it up
-  only after the final reviewed target and verdict have been recorded.
+- If review returns an in-scope blocking finding, repair it, rerun affected required validation,
+  capture a new after-tree with a new after-index path, and recheck the correction against the
+  original before-tree. Repeat until the exact latest target receives `Task review: Pass` with
+  zero unresolved blocking findings. Documentation-only P3 findings are advisory; record them
+  without mandatory repair or another review pass. Never claim a blocker resolved solely because
+  code changed after it was reported.
+- Keep the baseline bundle until the final passing verdict or a reported blocker. Clean it up only
+  after the final reviewed target, verdict, and any advisory findings have been recorded.
 - If `$task-reviewer` is unavailable, perform the same defect-first review locally and report
   material residual risks clearly.
 - If review feedback materially conflicts with approved task scope, stop and surface conflict instead of deciding unilaterally.

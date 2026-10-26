@@ -1,6 +1,6 @@
 ---
 name: task-reviewer
-description: Run a read-only, spec-aware review of one approved feature task or standalone spec before merge. Use after implementation or when the user asks to review a task-driven change; load the full task package, resolve the exact diff, review in the current context by default, and return verified, actionable findings.
+description: Run a brief, read-only local check of one task against its approved scope and exact diff. Use after implementation or for a requested task review; check correctness and directly affected boundaries, and report blocking findings separately from advisory documentation-only P3 issues.
 ---
 
 # Task Reviewer
@@ -22,7 +22,8 @@ Classify an entry as a feature task only when it is under a feature root contain
 `tasks.md`, and `tasks/`. Otherwise require a standalone spec root. Do not infer feature status from
 unrelated ancestor files.
 
-Read the complete package before reviewing code:
+Read the brief and plan once as the task contract. Consult other artifacts only as needed to
+resolve affected decisions or evidence:
 
 - Applicable `AGENTS.md` and `CLAUDE.md` instructions
 - `brief.md` when present
@@ -38,8 +39,8 @@ review. Note missing optional artifacts without stopping.
 ## Resolve the Change
 
 Identify the repository root and the exact review target. Honor a user-specified uncommitted diff,
-base branch, commit, or custom target. Always inspect the complete diff and enough surrounding code,
-tests, and call sites to understand every changed path.
+base branch, commit, or custom target. Inspect the complete task diff and only the surrounding
+code, tests, and call sites needed to check its directly affected behavior and boundaries.
 
 For an uncommitted review, inspect repository status, the staged diff, the unstaged diff, and the
 complete contents of every untracked file. Enumerate that full path set in the review inputs; plain
@@ -71,27 +72,17 @@ Do not rely on a diff summary or compare directly with a moving branch tip.
 
 ## Enrich with Reveal When Available
 
-After resolving the complete target, use Reveal as an optional structural evidence layer:
+Use Reveal optionally when a concrete review concern would benefit from structural evidence, such
+as an unclear dependency, changed symbol, or affected call boundary. Availability alone is not a
+reason to run it; skip routine discovery and blanket analysis on every task.
 
-1. Locate the `reveal` executable with the platform's command lookup. The package name is
-   `reveal-cli`, but the executable is `reveal`.
-2. If present, record `reveal --version` and inspect `reveal --agent-help`, falling back to
-   `reveal --help`. Use only commands and URI adapters advertised by that installed binary; do not
-   infer capabilities from remote documentation or the version number alone.
-3. Filter the changed-path set to existing code files supported by `reveal --list-supported`.
-   Continue to inspect deleted, binary, and unsupported files through the diff and normal tools.
-4. Run a lightweight structural pass over supported changed files, starting with
-   `reveal --stdin --outline`. Drill into risky files with `reveal <file> --typed`,
-   `reveal <file> <changed-symbol>`, or `reveal <file> --check --select B,S,C,E` when the local help
-   confirms those options.
-5. Use a concise summary of relevant symbols, containment, imports, complexity signals, and
-   detector results during the review. Do not let unfiltered Reveal output crowd out the task
-   package, diff, or source evidence.
-
-Treat Reveal output as investigation leads, not findings. Verify every consequential signal against
-the source, diff, call sites, tests, or runtime behavior. If Reveal is unavailable, unsupported for
-the changed language, or fails, continue the full review with normal repository tools. Do not
-install it, block the review, or lower the review standard.
+- When useful, locate the `reveal` executable and inspect its installed version and help as needed.
+  Use only commands and options advertised by that binary.
+- Target the relevant supported files or symbols and stop when the concern is resolved. Keep the
+  exact task diff as the review boundary.
+- Treat output as investigation leads; verify findings against source, call sites, tests, or
+  behavior. If Reveal is absent, unsupported, or fails, continue with normal repository tools.
+  Do not install it or block task review because it is unavailable.
 
 ## Run the Review Pass
 
@@ -104,9 +95,14 @@ Otherwise apply the review contract below directly. Invoke a separate built-in r
 hosted PR review, or external review service only when the user explicitly requests that additional
 review.
 
-Keep the pass read-only even when it runs in the implementation context. Inspect the complete target
-and use the task package as an adversarial checklist rather than relying on implementation memory or
-the author's summary.
+Keep the pass brief and read-only. Compare the exact diff with approved scope, acceptance criteria,
+and directly affected contracts; check for concrete local correctness defects and scope drift.
+Reuse still-valid validation evidence. Run another check only when a specific gap or suspected
+failure warrants it. Use targeted Reveal checks only as described above; skip routine tool discovery
+and blanket structural analysis. Do not run a repository survey or cumulative feature review.
+Reserve cross-task integration and assembled-feature
+readiness for `$feature-reviewer`; still flag a concrete boundary defect visible in this task.
+Do not rely solely on implementation memory or the author's summary.
 
 ## Review Contract
 
@@ -140,5 +136,16 @@ task constraint when applicable. Cite a tight repository-relative location that 
 - `P2`: ordinary defect that should be fixed
 - `P3`: low-impact issue that is still worth fixing
 
-If no issue qualifies, say `No findings.` Do not invent feedback. End with a brief overall
-assessment and only material test gaps or residual risks.
+Treat documentation-only P3 findings as advisory: report them separately and do not require a
+repair to pass. This means an explanatory/editorial issue with no effect on behavior, contracts,
+or safe operation. A defect in operative skill instructions is not documentation-only merely
+because its file is Markdown. All other qualifying findings remain blocking.
+
+If no issue qualifies, say `No findings.` Do not invent feedback. End with exactly one task verdict:
+
+- `Task review: Pass` when no unresolved blocking finding remains, including when advisory
+  documentation-only P3 findings remain.
+- `Task review: Needs fixes` when any blocking finding remains or required inputs are incomplete.
+
+Report unresolved blocking and advisory counts separately. Mention only material validation gaps
+or residual risks. This verdict is local task checking, not independent feature readiness.

@@ -123,7 +123,9 @@ review, publish comments, or contact an external service unless the user explici
 In addition to native defect findings, verify:
 
 - Every feature-level requirement is implemented, tested where risk warrants it, or explicitly a
-  non-goal
+  non-goal. Judge coverage against the recorded deployment stage and approved testing policy;
+  flag missing tests only when they leave a meaningful behavior or boundary unprotected. Do not
+  demand tests merely because code changed or duplicate coverage at another layer
 - Task outputs integrate correctly across shared boundaries and end-to-end flows
 - Later tasks did not invalidate assumptions, tests, or behavior established by earlier tasks
 - UI behavior and visual results match feature-level direction when relevant

@@ -47,7 +47,8 @@ Use `--dry-run` when checking what would happen before allowing a move.
 - Creates only archive container directories such as `ai/archive/features/` or `ai/archive/specs/`.
 - Never pre-creates the final target directory.
 - Never overwrites an existing final target.
-- Uses `git mv` inside a git worktree, otherwise plain filesystem move.
+- Always moves artifacts through the filesystem, including inside Git worktrees. Leaves the Git
+  index untouched; the user handles staging and Git move recognition.
 - Treats `ai/features/epics/<epic-slug>/` as the canonical epic location while accepting the legacy shallow epic location under `ai/features/`.
 - For grouped features, checks the epic's `## Features` checklist against immediate feature-root subdirectories before archiving the whole epic.
 - Archives canonical epics under `ai/archive/features/epics/<epic-slug>/`; legacy shallow epics retain their shallow archive layout.

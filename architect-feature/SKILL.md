@@ -27,9 +27,10 @@ Move feature or fix from ambiguity to simple, correct feature plan, establish an
 
 ## Priorities
 
-1. Simplicity
-2. Correctness
-3. Performance only when clear evidence it matters
+1. KISS: choose the simplest correct design for the current requirements.
+2. YAGNI: do not build speculative abstractions, extension points, compatibility layers, or future
+   capabilities. Preserve compatibility for real deployed consumers or explicit requirements.
+3. Performance only when clear evidence it matters.
 
 ## Rules
 
@@ -53,6 +54,15 @@ Move feature or fix from ambiguity to simple, correct feature plan, establish an
 ### 1. Discovery and alignment
 
 - Clarify requirements and constraints.
+- Establish whether the affected project or feature is under development / pre-production or
+  deployed / production. Reuse an explicit recorded answer; otherwise ask. Record the stage,
+  affected deployed contracts, compatibility decisions, and critical risks in `feature.md`.
+  A new feature in development does not make deployed APIs or consumers disposable. Leave
+  detailed testing policy and test selection to `$developer`.
+- When pre-production work may break APIs, integrations, or existing behavior, ask which approach
+  is intended: accept the break, update consumers together, or preserve compatibility. Record the
+  approved choice before task briefs depend on it. For production, preserve compatibility unless
+  the user explicitly approves the change; do not invent hypothetical consumers to justify layers.
 - Record every approved user decision in `feature.md` or the applicable feature artifact so later
   workers do not depend on conversation history.
 - Restate agreement as:
@@ -134,7 +144,8 @@ Create or update `tasks.md` in the feature directory.
 
 This file is human-reviewable task list for whole feature.
 
-- Keep tasks in implementation order.
+- Keep tasks in implementation order. Carry stage, compatibility decisions, and critical risks
+  into task briefs.
 - Use concise titles + short notes.
 - Make scan easy in one pass.
 
