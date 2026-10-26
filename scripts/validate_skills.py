@@ -4,7 +4,7 @@
 A skill is any top-level directory holding a SKILL.md. Each one must carry
 YAML frontmatter naming itself, ship an agents/openai.yaml interface block,
 and be listed exactly once in installable-skills.txt, which is what
-sync-installable-skills.sh reads when it links skills into Codex and Claude.
+sync-installable-skills.sh reads when it links skills into Codex, Claude Code, and Cursor.
 """
 
 from __future__ import annotations

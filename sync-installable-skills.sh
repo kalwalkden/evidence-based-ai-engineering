@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# Sync the skills listed in installable-skills.txt into Codex and Claude.
+# Sync the skills listed in installable-skills.txt into Codex, Claude Code, and Cursor.
 # This script deliberately manages symlinks only; it never removes real files
-# or directories from either destination.
+# or directories from any destination.
 #
 # Pruning is limited to links this kit installed. A link is only ever removed
 # when it points into this repository, and the set of links installed from this
@@ -16,9 +16,9 @@ usage() {
 Usage: sync-installable-skills.sh [--dry-run]
 
 Create or repair absolute symlinks for every skill named in
-installable-skills.txt, then remove the symlinks in ~/.codex/skills and
-~/.claude/skills that this kit previously installed and that the file no
-longer names.
+installable-skills.txt, then remove the symlinks in ~/.codex/skills,
+~/.claude/skills, and ~/.cursor/skills that this kit previously installed
+and that the file no longer names.
 
 Links pointing outside this repository belong to other projects: they are
 never removed, and a name already held by one is skipped with a warning
@@ -272,7 +272,7 @@ ensure_no_managed_name_collisions() {
   done
 }
 
-destinations=("$HOME/.codex/skills" "$HOME/.claude/skills")
+destinations=("$HOME/.codex/skills" "$HOME/.claude/skills" "$HOME/.cursor/skills")
 for destination_root in "${destinations[@]}"; do
   run mkdir -p "$destination_root"
   ensure_no_managed_name_collisions "$destination_root"
