@@ -6,7 +6,7 @@
   `SKILL.md` and an `agents/openai.yaml` interface manifest (`scripts/validate_skills.py`).
 - Python 3.9+ supports skill validation and the archive utility; Ruff and pytest configuration lives
   in `pyproject.toml` (`pyproject.toml`, `archive-work-artifact/`).
-- POSIX shell implements installation and the canonical local check runner
+- Bash 3.2+ implements installation and the canonical local check runner
   (`sync-installable-skills.sh`, `scripts/check.sh`).
 - GitHub Actions runs the same lint, prose, validation, and Python test classes as the local runner
   (`.github/workflows/ci.yml`, `scripts/tool-versions.env`).
@@ -22,8 +22,9 @@
 - Markdown structure, spelling, Python style, YAML, and shell are checked with pinned tools
   (`.markdownlint-cli2.jsonc`, `cspell.json`, `pyproject.toml`, `.yamllint.yaml`,
   `scripts/tool-versions.env`).
-- Python tests use pytest and currently concentrate on the archival script
-  (`archive-work-artifact/tests/test_archive_work_artifact.py`).
+- Python tests use pytest to cover archival and isolated installer filesystem behavior
+  (`archive-work-artifact/tests/test_archive_work_artifact.py`,
+  `scripts/tests/test_sync_installable_skills.py`).
 
 ## Linting and testing commands
 
@@ -41,7 +42,7 @@
 - Workflow boundary: `discover-architecture/SKILL.md` creates repository orientation consumed by
   `architect-feature/SKILL.md`, while `trace-domain-flow/SKILL.md` deepens one selected path.
 - Installation boundary: `installable-skills.txt` is the source list consumed by
-  `sync-installable-skills.sh`; structural validation keeps that list aligned with skill directories
+  `sync-installable-skills.sh` for Codex, Claude Code, and Cursor; structural validation keeps that list aligned with skill directories
   (`scripts/validate_skills.py`).
 - Validation boundary: `scripts/check.sh` is the canonical aggregator mirrored by
   `.github/workflows/ci.yml`, with versions centralized in `scripts/tool-versions.env`.

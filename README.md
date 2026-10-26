@@ -9,7 +9,7 @@
 <p align="center">
   <img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-8a6d3b.svg?labelColor=050806">
   <img alt="10 skills" src="https://img.shields.io/badge/skills-10-8a6d3b.svg?labelColor=050806">
-  <img alt="Runtimes: Codex and Claude Code" src="https://img.shields.io/badge/runtimes-Codex%20%7C%20Claude%20Code-8a6d3b.svg?labelColor=050806">
+  <img alt="Runtimes: Codex, Claude Code, and Cursor" src="https://img.shields.io/badge/runtimes-Codex%20%7C%20Claude%20Code%20%7C%20Cursor-8a6d3b.svg?labelColor=050806">
   <img alt="Requires bash 3.2+" src="https://img.shields.io/badge/requires-bash%203.2%2B-8a6d3b.svg?labelColor=050806">
 </p>
 
@@ -31,7 +31,7 @@ the next stage still has the evidence it needs.
 ## See it in 60 seconds
 
 Install the toolkit, then try it from the root of a repository you want to understand or change.
-The dry run is read-only; the final command creates links for both Codex and Claude Code.
+The dry run is read-only; the final command creates links for Codex, Claude Code, and Cursor.
 
 ```bash
 git clone https://github.com/kalwalkden/evidence-based-ai-engineering.git
@@ -40,7 +40,7 @@ cd evidence-based-ai-engineering
 ./sync-installable-skills.sh
 ```
 
-Start a new Codex or Claude Code session in your target repository so it discovers the installed
+Start a new Codex, Claude Code, or Cursor session in your target repository so it discovers the installed
 skills. Then send these prompts in order. They are agent prompts, not shell commands.
 
 **1. Map the repository before asking for a change.**
@@ -129,7 +129,7 @@ commitment, review boundaries, model routing, parallel investigation, and the ar
 ## Installation details
 
 The commands in [See it in 60 seconds](#see-it-in-60-seconds) create symlinks in
-`~/.codex/skills` and `~/.claude/skills`; they do not copy or move the toolkit. Keep the cloned
+`~/.codex/skills`, `~/.claude/skills`, and `~/.cursor/skills`; they do not copy or move the toolkit. Keep the cloned
 repository in place after installation. Pull future updates there, then run the installer again to
 add, repair, or retire the links managed by this checkout.
 
@@ -137,6 +137,10 @@ The installer only manages its own links. It records what it installed, removes 
 a skill is later dropped from the list, and never touches real files, real directories, or symlinks
 belonging to another project — if another project already owns a skill name, it skips that name with a
 warning instead of taking it over. See [Installer safety](#installer-safety).
+
+Installation makes the skill files available locally. Orchestration workflows still require the
+worker and model-selection capabilities declared in their skills; installation alone does not
+guarantee those capabilities in every runtime.
 
 ## Choose your workflow
 
@@ -241,8 +245,8 @@ Worth knowing before you adopt it:
 
 ## Installer safety
 
-`sync-installable-skills.sh` links every skill named in `installable-skills.txt` into `~/.codex/skills`
-and `~/.claude/skills`. It manages symlinks only that it owns:
+`sync-installable-skills.sh` links every skill named in `installable-skills.txt` into `~/.codex/skills`,
+`~/.claude/skills`, and `~/.cursor/skills`. It manages symlinks only that it owns:
 
 - **It records what it installed** in a manifest under `${XDG_STATE_HOME:-~/.local/state}/`, keyed by
   repository path. The two checkouts never clobber each other's record.
