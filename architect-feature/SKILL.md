@@ -32,6 +32,22 @@ Move feature or fix from ambiguity to simple, correct feature plan, establish an
    capabilities. Preserve compatibility for real deployed consumers or explicit requirements.
 3. Performance only when clear evidence it matters.
 
+## Complexity must earn its place
+
+Implement the requested workflow using the simplest existing mechanisms.
+
+Do not introduce persistent state, ownership markers, recovery protocols, speculative abstractions,
+or additional reasons to refuse an operation merely because a failure is conceivable.
+
+Add such machinery only when an explicit requirement or demonstrated current problem makes the
+simpler approach insufficient. Otherwise, report the failure clearly and allow ordinary manual
+correction.
+
+Do not turn implementation assumptions into user requirements by recording them in a plan or spec.
+A generated spec is not independent evidence that added complexity is necessary.
+
+Apply this internally; do not introduce extra approval rounds or justification documents.
+
 ## Rules
 
 - Ask only decision-relevant questions.

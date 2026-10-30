@@ -93,6 +93,22 @@ For standalone tasks (not inside a feature), ask the user for visual design when
 - When environment supports dedicated planning mode, use it. Otherwise run as normal planning conversation.
 - Use repository-relative paths rooted at repo top level throughout spec package unless calling environment explicitly requires absolute paths.
 
+## Complexity must earn its place
+
+Implement the requested workflow using the simplest existing mechanisms.
+
+Do not introduce persistent state, ownership markers, recovery protocols, speculative abstractions,
+or additional reasons to refuse an operation merely because a failure is conceivable.
+
+Add such machinery only when an explicit requirement or demonstrated current problem makes the
+simpler approach insufficient. Otherwise, report the failure clearly and allow ordinary manual
+correction.
+
+Do not turn implementation assumptions into user requirements by recording them in a plan or spec.
+A generated spec is not independent evidence that added complexity is necessary.
+
+Apply this internally; do not introduce extra approval rounds or justification documents.
+
 ## Task Validation Needs
 
 Identify the task's meaningful behaviors, affected boundaries, existing coverage, and material gaps.
