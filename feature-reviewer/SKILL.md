@@ -120,6 +120,9 @@ review, publish comments, or contact an external service unless the user explici
 
 ## Review the Assembled Feature
 
+Review necessity as well as correctness. Flag unrequested persistent state, blocking prerequisites,
+and recovery machinery even when they faithfully implement the generated spec.
+
 In addition to native defect findings, verify:
 
 - Every feature-level requirement is implemented, tested where risk warrants it, or explicitly a
