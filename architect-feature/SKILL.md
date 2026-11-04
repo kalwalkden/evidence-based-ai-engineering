@@ -35,14 +35,20 @@ Move feature or fix from ambiguity to simple, correct feature plan, establish an
 ## Complexity must earn its place
 
 Implement the requested workflow using the simplest existing mechanisms.
-In order to do this, you must first understand the problem being solved, then the system the work interacts with; only with the full picture can you understand what is necessary and unnecessary.
+In order to do this, you must frst understand the problem and the affected system before deciding which complexity is necessary. You must have the full picture. Investigate deeply enough to justify the feature's scope, design, dependencies, and task boundaries.
 
 ### 1. Solve the right problem — the biggest simplification
 
 Understand the objective, the motivation, and the success criteria. What are we even solving here? Is this ACTUALLY the thing we intend to solve, or are we doing something that's not right? Half understanding the problem is more dangerous than not understanding it. If things are not clear, ask clarifying questions. Don't overfit the problem.
-Once the requirements are crystal clear, question the product design thoroughly. Ask for data or ask to collect data. Be data-based wherever possible.
+Once the objective, requirements, and constraints are understood, question the product design thoroughly. Ask for data or ask to collect data. Be data-based wherever possible.
 
-### 2. Understand the system it's interacting with — you must have a full picture to make decisions
+### 2. Understand the affected system
+
+Trace the affected behavior, owning modules, contracts, and dependencies. Expand the investigation when evidence shows that the impact reaches further.
+
+Before finalizing the plan, resolve unknowns that could materially change feature scope, architecture, compatibility, or task decomposition.
+
+Do not defer a question merely because it concerns implementation. Investigate unresolved questions that could change the proposed design, feasibility, shared contracts, dependencies, or task boundaries. Defer a detail only when there is a supported reason that it can be resolved within the proposed plan. Record consequential deferred questions and why they do not block feature planning.
 
 ### 3. Ask counter questions for each design choice and propose simpler alternatives
 
