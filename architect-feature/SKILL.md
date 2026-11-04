@@ -48,7 +48,7 @@ Trace the affected behavior, owning modules, contracts, and dependencies. Expand
 
 Before finalizing the plan, resolve unknowns that could materially change feature scope, architecture, compatibility, or task decomposition.
 
-Do not defer a question merely because it concerns implementation. Investigate unresolved questions that could change the proposed design, feasibility, shared contracts, dependencies, or task boundaries. Defer a detail only when there is a supported reason that it can be resolved within the proposed plan. Record consequential deferred questions and why they do not block feature planning.
+Do not defer a question merely because it concerns implementation. Investigate unresolved questions that could change the proposed design, feasibility, shared contracts, dependencies, or task boundaries. Defer a detail only when there is a supported reason that it can be resolved within the proposed plan. Record bounded factual checks as verification notes in `feature.md` and carry them into the relevant task brief, following the guidance below. Keep unresolved decisions needed for the planned work in `Open Questions`.
 
 ### 3. Ask counter questions for each design choice and propose simpler alternatives
 
@@ -229,6 +229,11 @@ decision into the relevant Scope, Non-goals / later, Constraints / caveats, depe
 acceptance section and remove only the resolved or deferred item and its stale alternatives from
 `## Open Questions`, preserving all other unresolved items. Use exactly `None.` only when no
 unresolved items remain.
+
+Record deferred factual checks for `$shape-spec` as verification notes under `Constraints / caveats`,
+not as open questions. State what needs checking and why the possible outcomes stay within the
+approved scope and task order. Do not use verification notes to defer unresolved product, scope,
+architecture, policy, risk, or sequencing decisions.
 
 For `Likely starting points`, include only verified repository-relative files and, when known,
 symbols. Give one short reason each is relevant. Present them as likely landmarks that `$shape-spec`
