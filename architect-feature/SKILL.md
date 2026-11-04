@@ -35,7 +35,7 @@ Move feature or fix from ambiguity to simple, correct feature plan, establish an
 ## Complexity must earn its place
 
 Implement the requested workflow using the simplest existing mechanisms.
-In order to do this, you must frst understand the problem and the affected system before deciding which complexity is necessary. You must have the full picture. Investigate deeply enough to justify the feature's scope, design, dependencies, and task boundaries.
+In order to do this, you must first understand the problem and the affected system before deciding which complexity is necessary. You must have the full picture. Investigate deeply enough to justify the feature's scope, design, dependencies, and task boundaries.
 
 ### 1. Solve the right problem — the biggest simplification
 
@@ -189,6 +189,11 @@ This file is human-reviewable task list for whole feature.
 - Keep tasks in implementation order. Carry stage, compatibility decisions, and critical risks
   into task briefs.
 - Use concise titles + short notes.
+- Include each task's repository-relative task-folder path and an explicit `Dependencies` field.
+  List prerequisite tasks by their task-folder paths and name any other prerequisite work. Use
+  `None.` when there are no dependencies.
+- Keep dependencies in `tasks.md` consistent with each brief's `Dependent tasks or work` section.
+  Update both when dependencies change.
 - Make scan easy in one pass.
 
 ### 6. Task briefs
