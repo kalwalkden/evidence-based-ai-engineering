@@ -198,7 +198,7 @@ This file is human-reviewable task list for whole feature.
 
 ### 6. Task briefs
 
-IMPORTANT: Write tasks in implementation order, lowest risk and most foundational first. This enables early wins, risk reduction, better info for later tasks.
+IMPORTANT: Order tasks by dependencies first and preserve green task boundaries. Within those constraints, prioritize work that exposes implementation and integration risks early. Prefer lower-risk tasks when dependencies and risk reduction do not dictate the order.
 IMPORTANT: Split tasks only at boundaries where each task can keep the test suite green. If no such boundary exists, keep the coupled work in one atomic task instead of creating red intermediate states.
 
 Write one task folder per task under a `tasks/` directory inside the feature directory, using directories like:
