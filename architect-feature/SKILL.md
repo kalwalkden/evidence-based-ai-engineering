@@ -100,8 +100,9 @@ A generated spec is not independent evidence that added complexity is necessary.
   unresolved decision there or write exactly `None.` when none remain. A recommendation or stated
   preference is not an approved answer.
 - When a question is answered, record the selected decision in the relevant durable section and
-  return `## Open Questions` to `None.`. Put explicitly deferred work under Non-goals / out of scope
-  instead of leaving it open, and remove stale or contradictory alternatives.
+  remove only the resolved item from `## Open Questions`, preserving all other unresolved items.
+  Use exactly `None.` only when no unresolved items remain. Put explicitly deferred work under
+  Non-goals / out of scope instead of leaving it open, and remove stale or contradictory alternatives.
 - If multiple approaches are viable, present tradeoffs.
 - Require explicit approval before turning plan into task briefs.
 - Do not write task briefs or describe the feature as approved while feature-level questions remain
@@ -210,7 +211,9 @@ Task briefs should be concise and contain only:
 End every new `brief.md` with `## Open Questions`. Use exactly `None.` when no task-level decision
 remains; otherwise use a numbered list. When the user answers or explicitly defers an item, move the
 decision into the relevant Scope, Non-goals / later, Constraints / caveats, dependencies, or
-acceptance section, remove the unresolved alternative, and return the section to `None.`.
+acceptance section and remove only the resolved or deferred item and its stale alternatives from
+`## Open Questions`, preserving all other unresolved items. Use exactly `None.` only when no
+unresolved items remain.
 
 For `Likely starting points`, include only verified repository-relative files and, when known,
 symbols. Give one short reason each is relevant. Present them as likely landmarks that `$shape-spec`
