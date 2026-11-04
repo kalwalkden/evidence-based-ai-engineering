@@ -35,7 +35,7 @@ Move feature or fix from ambiguity to simple, correct feature plan, establish an
 ## Complexity must earn its place
 
 Implement the requested workflow using the simplest existing mechanisms.
-In order to do this, you must first understand the problem and the affected system before deciding which complexity is necessary. You must have the full picture. Investigate deeply enough to justify the feature's scope, design, dependencies, and task boundaries.
+In order to do this, you must first understand the problem and the affected system before deciding which complexity is necessary. Build a complete picture of the affected behavior and the dependencies needed to justify the feature plan. Investigate deeply enough to justify the feature's scope, design, dependencies, and task boundaries.
 
 ### 1. Solve the right problem — the biggest simplification
 
