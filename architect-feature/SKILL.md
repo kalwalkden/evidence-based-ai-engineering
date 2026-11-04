@@ -35,25 +35,34 @@ Move feature or fix from ambiguity to simple, correct feature plan, establish an
 ## Complexity must earn its place
 
 Implement the requested workflow using the simplest existing mechanisms.
+In order to do this, you must first understand the problem being solved, then the system the work interacts with; only with the full picture can you understand what is necessary and unnecessary.
 
-Do not introduce persistent state, ownership markers, recovery protocols, speculative abstractions,
-or additional reasons to refuse an operation merely because a failure is conceivable.
+### 1. Solve the right problem — the biggest simplification
 
+Understand the objective, the motivation, and the success criteria. What are we even solving here? Is this ACTUALLY the thing we intend to solve, or are we doing something that's not right? Half understanding the problem is more dangerous than not understanding it. If things are not clear, ask clarifying questions. Don't overfit the problem.
+Once the requirements are crystal clear, question the product design thoroughly. Ask for data or ask to collect data. Be data-based wherever possible.
+
+### 2. Understand the system it's interacting with — you must have a full picture to make decisions
+
+### 3. Ask counter questions for each design choice and propose simpler alternatives
+
+For example, do not introduce persistent state, ownership markers, recovery protocols, speculative abstractions, or additional reasons to refuse an operation merely because a failure is conceivable.
 Add such machinery only when an explicit requirement or demonstrated current problem makes the
 simpler approach insufficient. Otherwise, report the failure clearly and allow ordinary manual
 correction.
-
-Do not turn implementation assumptions into user requirements by recording them in a plan or spec.
-A generated spec is not independent evidence that added complexity is necessary.
 
 Apply this internally; do not introduce extra approval rounds or justification documents.
 
 ## Rules
 
+- Don't be lazy, don't work with assumptions or guesses — be thorough, be hard working.
+- Be patient, don't always try to produce next possible answer. Don't settle on the first thought, ponder, wonder, think through different ways, connect, mix and try non-standard, creative, mix and connect different dimension world domain ideas and concepts. Challenge your own ideas and seemingly possible answers then refine them further.
+- Prefer smallest solution that works. We almost never need that much for a feature or task — that much code, that many steps, that much process. What are the options we have? Articulate them — including approaches that defy the assumed realities. Then pick the simplest, most pragmatic one that holds.
+- Do not turn implementation assumptions into user requirements by recording them in a plan or spec.
+A generated spec is not independent evidence that added complexity is necessary.
 - Ask only decision-relevant questions.
 - State explicit assumptions when uncertainty exists.
 - Ask for visual design inputs when the feature affects UI, UX, visual hierarchy, layout, motion, branding, or interaction feel.
-- Prefer smallest solution that works.
 - Do not broaden scope with speculative improvements.
 - Inspect repo before asking stack or tooling questions.
 - Use repository-relative paths rooted at repo top level in plans, task lists, references unless calling environment explicitly requires absolute paths.
@@ -154,7 +163,13 @@ If visual design assets are supplied, store them under a `visuals/` directory in
 
 Reference those assets from `feature.md`. Do not copy the same visual design into every task brief.
 
-### 4. Task list
+### 4. Simplify The Design
+
+Before moving on to to the next step, simplify things. Cut it down. To simplify you must first understand the problem being solved, then the system the work interacts with; only with the full picture can you cut what is unnecessary.
+
+If the users adopts the suggested changes or asks you to make updates, go back to step 3 - Plan before implementation
+
+### 5. Task list
 
 Create or update `tasks.md` in the feature directory.
 
@@ -165,7 +180,7 @@ This file is human-reviewable task list for whole feature.
 - Use concise titles + short notes.
 - Make scan easy in one pass.
 
-### 5. Task briefs
+### 6. Task briefs
 
 IMPORTANT: Write tasks in implementation order, lowest risk and most foundational first. This enables early wins, risk reduction, better info for later tasks.
 IMPORTANT: Split tasks only at boundaries where each task can keep the test suite green. If no such boundary exists, keep the coupled work in one atomic task instead of creating red intermediate states.
