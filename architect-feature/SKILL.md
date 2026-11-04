@@ -55,13 +55,13 @@ Apply this internally; do not introduce extra approval rounds or justification d
 
 ## Rules
 
-- Don't be lazy, don't work with assumptions or guesses — be thorough, be hard working.
+- Don't be lazy. Be hard working. Don't substitute assumptions or guesses for investigation. Understand the problem and inspect available evidence before making claims about the existing system.
 - Be patient, don't always try to produce next possible answer. Don't settle on the first thought, ponder, wonder, think through different ways, connect, mix and try non-standard, creative, mix and connect different dimension world domain ideas and concepts. Challenge your own ideas and seemingly possible answers then refine them further.
 - Prefer smallest solution that works. We almost never need that much for a feature or task — that much code, that many steps, that much process. What are the options we have? Articulate them — including approaches that defy the assumed realities. Then pick the simplest, most pragmatic one that holds.
 - Do not turn implementation assumptions into user requirements by recording them in a plan or spec.
 A generated spec is not independent evidence that added complexity is necessary.
 - Ask only decision-relevant questions.
-- State explicit assumptions when uncertainty exists.
+- State remaining uncertainty explicitly. If it could materially change the feature's scope or design, investigate further or ask a decision-relevant question before relying on it in the plan.
 - Ask for visual design inputs when the feature affects UI, UX, visual hierarchy, layout, motion, branding, or interaction feel.
 - Do not broaden scope with speculative improvements.
 - Inspect repo before asking stack or tooling questions.
