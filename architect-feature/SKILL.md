@@ -164,11 +164,15 @@ If visual design assets are supplied, store them under a `visuals/` directory in
 
 Reference those assets from `feature.md`. Do not copy the same visual design into every task brief.
 
-### 4. Simplify The Design
+### 4. Simplify the design
 
-Before moving on to to the next step, simplify things. Cut it down. To simplify you must first understand the problem being solved, then the system the work interacts with; only with the full picture can you cut what is unnecessary.
+Review the proposed plan for unnecessary scope, mechanisms, dependencies, and process. Challenge design choices and consider simpler alternatives while preserving the agreed requirements and constraints.
 
-If the users adopts the suggested changes or asks you to make updates, go back to step 3 - Plan before implementation
+If a simpler approach meets those requirements, propose it and explain any meaningful tradeoffs. When the user accepts changes, update `feature.md` before proceeding.
+
+If no further simplification is justified, retain the design. Do not force a reduction or invent changes merely to complete this step.
+
+Once the resulting plan is approved and no feature-level questions remain unresolved, proceed to the task list. Reopen the design when new evidence or changed requirements warrant it.
 
 ### 5. Task list
 
