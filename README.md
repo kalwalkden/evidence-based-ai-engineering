@@ -271,6 +271,10 @@ Worth knowing before you adopt it:
 Skills are plain Markdown with a small YAML block on top. Adapting the language, commands, and
 quality gates to your team's practice is expected.
 
+Repository development defaults to Python 3.14 via `.python-version`. Local checks and CI test
+Python 3.10–3.14; CI uses Node 26 LTS for prose tools. Tool versions are pinned in
+`scripts/tool-versions.env`.
+
 ## Contributing
 
 Contributions that improve evidence quality, clarity, safety, validation, and developer experience are
