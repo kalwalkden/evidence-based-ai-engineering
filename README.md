@@ -8,7 +8,7 @@
 
 <p align="center">
   <img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-8a6d3b.svg?labelColor=050806">
-  <img alt="10 skills" src="https://img.shields.io/badge/skills-10-8a6d3b.svg?labelColor=050806">
+  <img alt="11 skills" src="https://img.shields.io/badge/skills-11-8a6d3b.svg?labelColor=050806">
   <img alt="Runtimes: Codex, Claude Code, and Cursor" src="https://img.shields.io/badge/runtimes-Codex%20%7C%20Claude%20Code%20%7C%20Cursor-8a6d3b.svg?labelColor=050806">
   <img alt="Requires bash 3.2+" src="https://img.shields.io/badge/requires-bash%203.2%2B-8a6d3b.svg?labelColor=050806">
 </p>
@@ -61,8 +61,9 @@ Use architect-feature to plan per-organization rate limiting. Keep existing per-
 public API unchanged.
 ```
 
-The architect writes `ai/features/<feature-slug>/feature.md` and `tasks.md`, then stops before task
-briefs are final. Read the proposed scope, deployment stage, compatibility/testing decisions,
+The architect drafts `ai/features/<feature-slug>/feature.md` and any visual design, then runs an
+independent `simplify-by-design-review` before presenting the plan for approval. Read the review
+findings and the proposed scope, deployment stage, compatibility/testing decisions,
 non-goals, tradeoffs, and task order. Answer any open questions. When it matches your intent, say:
 
 ```text
@@ -189,7 +190,8 @@ Plan it, break it into reviewable tasks, then run to completion with an independ
 
 | Skill | Role |
 | --- | --- |
-| `architect-feature` | Feature plan, visual design, `tasks.md`, and task briefs — pauses for approval |
+| `architect-feature` | Feature plan and visual design, independent design review, then approval before task briefs |
+| `simplify-by-design-review` | Read-only review of plans, PRs, or discussions for evidence-backed simplification |
 | `ship-feature` | Runs every remaining task, then up to three independent reviews |
 
 Completed feature example: **Reveal 0.122 Skill Adapters** — [feature plan](ai/archive/features/reveal-0-122-skill-adapters/feature.md)
@@ -269,6 +271,10 @@ Worth knowing before you adopt it:
 Skills are plain Markdown with a small YAML block on top. Adapting the language, commands, and
 quality gates to your team's practice is expected.
 
+Repository development defaults to Python 3.14 via `.python-version`. Local checks and CI test
+Python 3.10–3.14; CI uses Node 26 LTS for prose tools. Tool versions are pinned in
+`scripts/tool-versions.env`.
+
 ## Contributing
 
 Contributions that improve evidence quality, clarity, safety, validation, and developer experience are
@@ -287,6 +293,9 @@ are genuinely useful - especially the ones where the toolkit got in the way.
 ## License
 
 Licensed under the Apache License, Version 2.0 — see [LICENSE](LICENSE).
+
+The adapted [simplify-by-design-review](simplify-by-design-review/SKILL.md) skill is distributed under
+its [MIT License](simplify-by-design-review/LICENSE), with attribution to the upstream project.
 
 Copyright 2026 Kal Walkden.
 

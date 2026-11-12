@@ -206,10 +206,8 @@ Only after preflight is Ready and the branch gate has passed, initialize
 spawning a worker. Do this even when every task may already be complete, because the independent
 review and final report still need a durable cycle record.
 
-Immediately after initialization, append a new `ship-feature` run heading with an absolute UTC
-start timestamp. This timestamp identifies this invocation. A resumed invocation appends a new run;
-never continue or rewrite timing for an earlier run. Timing begins here and deliberately excludes
-preflight and branch-gate waiting.
+After initialization, read any existing log to recover prior results and append a short run heading
+identifying this invocation. A resumed invocation does not reset the feature-review attempt count.
 
 Before the first spawn, check whether any task is actually incomplete. If every task in `tasks.md` is
 already complete, say so, skip this section entirely, and go straight to the independent feature
@@ -222,8 +220,7 @@ Repeat until every task in `tasks.md` is complete:
 1. Re-read `tasks.md` from disk and select the first incomplete task in implementation order.
 2. Inspect its `brief.md`, dependencies, feature-level implementation map, relevant completed
    tasks, and validation mode from "Select Validation Per Task" enough to select a shaping model.
-3. Immediately before spawning, append a UTC shaping-start timestamp for this task. Spawn one shaping
-   worker with the selected planner model. Start it with no inherited
+3. Spawn one shaping worker with the selected planner model. Start it with no inherited
    implementation conversation, using whatever mechanism the runtime provides for that; see
    "Start Workers Without Inherited Conversation" below. Give the worker the repository root, exact
    feature root, exact task path, and this instruction:
@@ -245,11 +242,9 @@ Repeat until every task in `tasks.md` is complete:
    in the return.
    ```
 
-4. Wait for the shaping worker. If it returns a blocking question, append a UTC user-wait start for
-   this task immediately before putting the question to the user. When the user responds, append the
-   UTC wait end and elapsed wait, then send the answer back to the same worker and require it to
-   record the approved decision in the task spec or applicable feature artifact before finishing.
-   When shaping completes, append its UTC end and elapsed wall-clock duration.
+4. Wait for the shaping worker. If it returns a blocking question, put it to the user. Send the
+   answer back to the same worker and require it to record the approved decision in the task spec
+   or applicable feature artifact before finishing.
 5. Re-read the complete task package directly. Require both spec files and verify that the
    implementation map is current, specific, includes validation, and distinguishes current checks
    from deferred full commands when applicable. Re-read `tasks.md` and correct the mode or resume
@@ -266,8 +261,7 @@ Repeat until every task in `tasks.md` is complete:
    captured HEAD tree. Keep that bundle until task review finishes. Capture it after shaping,
    so the task's shaped `spec/` package falls outside the reviewed delta by design; the reviewer reads
    that package as intent, not as change.
-8. Immediately before spawning, append a UTC implementation-and-local-review start timestamp for
-   this task. Spawn a new implementation worker with no inherited implementation conversation. Give it the
+8. Spawn a new implementation worker with no inherited implementation conversation. Give it the
    repository root, exact feature root, exact task path, and this instruction:
 
    ```text
@@ -301,12 +295,9 @@ Repeat until every task in `tasks.md` is complete:
    package instead.
    ```
 
-9. Wait for the implementation worker. If it returns a blocking question, append a UTC user-wait
-   start for this task immediately before putting the question to the user. When the user responds,
-   append the UTC wait end and elapsed wait, then send the answer back to the same worker and require
-   it to record the approved decision in the task spec or applicable feature artifact before
-   continuing. When the worker returns its final accepted result, append the UTC end and elapsed
-   duration for implementation and local task review.
+9. Wait for the implementation worker. If it returns a blocking question, put it to the user. Send
+   the answer back to the same worker and require it to record the approved decision in the task
+   spec or applicable feature artifact before continuing.
 10. Re-read `tasks.md`, repository status, and relevant task artifacts directly. Use the worker's
    exact final reviewed change target, validation commands, exit statuses, and task-review verdict
    as evidence for results that are not persisted on disk. Require confirmation that the final
@@ -340,66 +331,45 @@ checking task status or launching review. Never truncate an existing log or rewr
 Append after each task completes, immediately after every feature-review verdict returns, and after
 every repair pass.
 
-Use absolute UTC timestamps and simple wall-clock durations. The parent orchestrator takes every
-clock reading; workers do not self-report duration. Append each stage start when it is taken so
-timing survives context loss, then append its end and elapsed duration when it completes. Use
-`unknown` rather than zero or an estimate for missing timing or counts.
+Keep entries compact. Link to exact artifact sections for details already recorded there rather
+than copying them. Preserve commands and exit statuses in the log when they exist only in worker
+returns; a command listed in a plan is not evidence that it ran. Do not collect stage timestamps,
+durations, user-wait totals, longest-stage summaries, or aggregate validation-execution counts.
 
-Maintain one run-level count of known executions of the repository's canonical full validation.
-Increment it only when returned or logged evidence identifies that command and its result. Include
-repeated full validation after implementation corrections, repairs, and fresh feature reviews when
-the evidence supports it. Record `unknown` in the terminal summary if a complete count cannot be
-established from durable evidence.
+When first logging a partially or fully completed feature, append a short resume-state entry naming
+tasks already marked complete. Record unavailable model or validation history as `unknown`; do not
+invent or reconstruct missing history from assumptions.
 
-When the log is first created for a partially or fully completed feature, append a resume-state entry
-listing tasks already marked complete. Record their model and validation history as `unknown —
-predates ship log` unless durable evidence provides those values. Do not invent missing history.
+Append one entry per completed task with:
 
-Record per task:
-
-- Task identifier and title
-- Shaping model and reasoning effort, or `effort: unavailable`
-- Implementation model and reasoning effort, or `effort: unavailable`
-- Validation commands and exit statuses
-- Validation mode and whether the full suite was deferred
+- Task identifier and a pointer to its task artifacts
+- Shaping and implementation models and reasoning effort, or `effort: unavailable`
+- Exact reviewed change target, validation mode, results, and any full-suite deferral
 - Local task-review verdict and separate unresolved blocking/advisory counts
-- Any approved user decision, with a pointer to the artifact that records it in full
-- Shaping start, end, and elapsed duration
-- Implementation-and-local-review start, end, and elapsed duration
-- Any separately observed user wait during this task
+- References to approved decisions when needed to explain the outcome
 
-Record per feature-review cycle:
+Append one entry immediately after each feature-review verdict with:
 
-- Cycle number, review model and effort, and verdict
-- Validation commands and exit statuses from that reviewer context
-- Verified findings and the task each was routed to
-- `Repairs: none` for a Ready verdict, `Repairs: pending` for a Not ready verdict on attempts 1–2,
-  or `Repairs: not run — attempt limit reached` for a Not ready verdict on attempt 3
-- Feature-review start, end, and elapsed duration
-- Any separately observed user wait during this cycle
+- Cycle number, review model and effort, exact reviewed target, and verdict
+- Validation commands and exit statuses from that reviewer context, or exact evidence references
+- Unresolved findings and the task each is routed to
+- `Repairs: none` for Ready, `Repairs: pending` for Not ready on attempts 1–2, or
+  `Repairs: not run — attempt limit reached` for Not ready on attempt 3
 
-After repairs for a Not ready cycle, append a separate repair entry with the cycle number, changes
-made, owning tasks, revalidation commands and results, and repair start, end, and elapsed duration.
-Do not delay or rewrite the original review-cycle entry while waiting for repairs.
+After a repair pass, append its cycle number, owning tasks, concise outcome, and revalidation
+results or evidence references. Keep the original review verdict unchanged.
 
-At a terminal state reached after the run starts, append one short timing summary before the final
-report. Terminal states are a Ready verdict followed by completion/archive handoff, a third Not
-ready verdict, or a genuine blocker or denied permission that ends safe progress. A temporary
-blocking question is a pause, not a terminal state. Before appending, check this run's earlier
-entries and do not duplicate an existing terminal timing summary. The summary must contain:
+Before a final report, append a short outcome entry at the verified final active or archived path:
+completion and archive/epic handoff, exhausted review attempts, or the blocker and next action.
+Do not duplicate an outcome already recorded for this invocation. Record a blocking question before
+waiting if the pending decision is not already durable in a referenced artifact; append its
+resolution or a decision reference when answered.
 
-- Run start, run end, and total elapsed duration
-- Completed task, review, and repair stages with their elapsed durations
-- Total observed user wait, or `none observed`
-- Known canonical full-validation executions, or `unknown`
-- Longest completed stage, or `unknown` when the available durations are incomplete
-
-Append the successful-run summary to the log at its verified final artifact path before building the
-final report. For a stopped run, append it at the verified active feature path.
-
-At the start of every turn, and before the final report, read this log from disk. Treat it as the
-source of truth for what already happened; use conversation memory only to supplement it. When the
-log and this context disagree, trust the log and say so.
+Read the log on startup/resume after preflight and the branch gate, after context loss, before
+counting review attempts, and before the final report. Do not reread it on every ordinary turn.
+Use it as the durable record of prior outcomes, while checking current task and repository state
+directly. Resolve discrepancies against the underlying evidence rather than assuming the log
+proves the current tree is valid. Existing detailed logs remain valid; do not rewrite their history.
 
 The log is a run artifact, not a planning artifact. Leave it beside `feature.md` so it archives with
 the feature.
@@ -416,8 +386,7 @@ Resolve or obtain the feature comparison base before review. Honor a base branch
 by the user. Otherwise let `$feature-reviewer` resolve the remote default branch, and surface any
 ambiguity it reports.
 
-Immediately before spawning, append a UTC feature-review start timestamp for the next cycle. Spawn a
-new feature-review agent with the selected review model and reasoning effort. Start it with
+Spawn a new feature-review agent with the selected review model and reasoning effort. Start it with
 no inherited conversation history. Pass only:
 
 - The repository root
@@ -441,10 +410,9 @@ must be complete enough to act on, but keep everything else terse.
 
 Do not pass task-worker reasoning, expected findings, repair hypotheses, or a proposed verdict.
 Wait for the reviewer and inspect its returned verdict. If it returns a blocking question instead
-of a verdict, append a UTC user-wait start for that cycle immediately before putting the question to
-the user. When the user responds, append the UTC wait end and elapsed wait, then resume the same
-reviewer with the answer; do not log a review cycle until a verdict exists. When a verdict returns,
-append the UTC review end and elapsed wall-clock duration.
+of a verdict, put the question to the user and resume the same reviewer with the answer. Preserve
+the pending question as described in "Keep a Durable Run Log"; do not log a review cycle until a
+verdict exists.
 
 Immediately after a verdict returns, verify that the reviewer left the feature at its active path and
 append the complete cycle entry to its `ship-log.md`. Record `Repairs: none` for Ready and `Repairs:
@@ -457,7 +425,7 @@ Treat each returned feature-readiness verdict as one independent-review attempt.
 that return no verdict do not consume an attempt. Before spawning a reviewer, count the completed
 feature-review cycle entries in `ship-log.md`; never launch an attempt when three verdict cycles are
 already recorded. If three cycles are already recorded and the latest verdict is Not ready, append
-the exhaustion entry if it is absent, append the terminal timing summary, and alert the user as
+the exhaustion outcome if it is absent, and alert the user as
 described in "Final Report". This count is durable across turns and resumed runs.
 
 ## Repair Within Three Review Attempts
@@ -467,12 +435,11 @@ If the reviewer returns `Feature readiness: Not ready`:
 1. Read the just-appended cycle number from `ship-log.md`. If it is attempt 3, stop immediately:
    do not launch repairs or another independent reviewer. Leave the feature active and unarchived,
    append an `Independent review attempts exhausted` entry containing the unresolved findings and
-   latest validation results, append the terminal timing summary, and alert the user as described in
+   latest validation results, and alert the user as described in
    "Final Report".
 2. Confirm that feature status and artifacts remain active and unarchived.
 3. Route each verified finding to the narrowest owning task when possible.
-4. Immediately before starting repairs, append a UTC repair-start timestamp for this cycle. Spawn a
-   suitably capable repair worker with the raw finding, feature root, owning task package,
+4. Spawn a suitably capable repair worker with the raw finding, feature root, owning task package,
    and cited source locations. Tell it the `$ship-feature` parent owns feature review, so it must not
    dispatch `$feature-reviewer`, that its validation mode is `full`, and that it must return an
    unresolved decision as a blocking question rather than asking the user.
@@ -482,7 +449,7 @@ If the reviewer returns `Feature readiness: Not ready`:
 6. Run affected tests and the canonical full validation after all repairs; focused task
    validation cannot replace these repair checks.
 7. Append a repair entry to the run log for this cycle: changes made, owning tasks, revalidation
-   commands and results, plus the UTC repair end and elapsed duration. Keep the earlier review-cycle
+   commands and results or evidence references. Keep the earlier review-cycle
    verdict entry unchanged.
 8. Launch a brand-new feature-review context through the complete independent-review procedure
    above, including its no-inherited-conversation requirement. Never resume or reuse the
@@ -492,7 +459,7 @@ Repeat repair and fresh-review cycles until the verdict is `Feature readiness: R
 independent-review attempt returns `Feature readiness: Not ready`. Never run a fourth attempt. Also
 stop when a user decision, denied permission, missing external dependency, ambiguous comparison
 target, contradictory approved requirements, or exhausted safe repair path prevents further
-progress. Before reporting that terminal blocker, append the terminal timing summary at the active
+progress. Before reporting that terminal blocker, record it and the next action at the active
 feature path. Report the exact blocker and leave the feature active.
 
 ## Verify Completion and Archival
@@ -508,13 +475,13 @@ Ready cycle has been appended to `ship-log.md`:
 3. Invoke/use `$archive-work-artifact` on the feature root with feature completion confirmed. Do not
    hand-move it or overwrite an existing archive target.
 4. Locate and verify the final artifact path returned by the archive handoff.
-5. Append the terminal timing summary to `ship-log.md` at that verified final path.
-6. For an ungrouped feature, verify the feature was archived without overwriting an existing
+5. For an ungrouped feature, verify the feature was archived without overwriting an existing
    artifact.
-7. For a grouped feature whose epic remains active, verify the epic checklist was updated and
+6. For a grouped feature whose epic remains active, verify the epic checklist was updated and
    report that no directory moved.
+7. Append the verified completion and archive/epic-handoff outcome to `ship-log.md` at the final path.
 8. If completion or archival fails after a Ready verdict, continue the safe handoff when possible or
-   append the terminal timing summary at the verified active path and report that operational failure
+   record the operational failure and next action at the verified current path and report them
    separately. Do not rerun implementation or independent review merely because the post-verdict
    state transition failed.
 
@@ -525,7 +492,7 @@ verified.
 ## Final Report
 
 Build this report from the `ship-log.md` under the feature's verified final active or archived path,
-not from memory of the run. Report concisely:
+following its evidence references as needed, not from memory of the run. Report concisely:
 
 - Final feature and artifact path
 - Tasks completed and the shaping model/reasoning plus implementation model/reasoning used for each
@@ -533,7 +500,6 @@ not from memory of the run. Report concisely:
 - Number of independent feature-review cycles and review model used for each
 - Repairs made in response to feature findings
 - Completion and archive or epic-checklist result
-- Run elapsed duration and longest completed stage
 - Any preferred runtime capability that was unavailable, stated once
 - Material residual risks, if any
 
@@ -566,7 +532,7 @@ points, rather than once at the end:
 
 Commit the whole tree state at that moment, always including the `ship-log.md` entry for what just
 finished, so the durable run record advances with the work it describes and a resumed run reads
-timing, routing, and cycle counts from the branch rather than from a lost VM. Message each commit
+outcomes, routing, and cycle counts from the branch rather than from a lost VM. Message each commit
 for what it contains — the task identifier, the repair, or the final report's concise message —
 and push it immediately; a commit that is never pushed protects nothing. A run that ends early then
 leaves every finished task durable on the branch, and loses at most the task in flight.

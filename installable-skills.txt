@@ -1,4 +1,5 @@
 architect-feature
+simplify-by-design-review
 discover-architecture
 ship-task
 ship-feature

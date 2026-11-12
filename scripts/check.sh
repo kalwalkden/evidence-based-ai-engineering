@@ -24,7 +24,7 @@ Groups:
   test       pytest across the supported Python versions
 
 With no arguments every group runs. Set PYTHON_VERSIONS to override the test
-matrix, e.g. PYTHON_VERSIONS="3.12" scripts/check.sh test
+matrix, e.g. PYTHON_VERSIONS="3.14" scripts/check.sh test
 EOF
 }
 
@@ -42,7 +42,7 @@ for tool in uv npx; do
   fi
 done
 
-: "${PYTHON_VERSIONS:=3.10 3.11 3.12 3.13}"
+: "${PYTHON_VERSIONS:=3.10 3.11 3.12 3.13 3.14}"
 
 failures=()
 log_dir="$(mktemp -d)"
