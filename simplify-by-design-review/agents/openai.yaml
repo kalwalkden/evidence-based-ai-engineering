@@ -1,0 +1,4 @@
+interface:
+  display_name: "Simplify by Design Review"
+  short_description: "Review designs for unnecessary complexity"
+  default_prompt: "Use $simplify-by-design-review to review this plan, PR, or design discussion and recommend simpler alternatives grounded in the requirements and system evidence."
